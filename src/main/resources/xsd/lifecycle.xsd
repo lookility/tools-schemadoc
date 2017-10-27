@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:xsd:com.lookility.schemadoc.lifecycle:v1"
+        xmlns:lc="urn:xsd:com.lookility.schemadoc.lifecycle:v1" version="1.0.0">
+    <simpleType name="VersionType">
+        <annotation>
+            <documentation xml:lang="en">Version identifier. Usually following the semantic versioning pattern.</documentation>
+        </annotation>
+        <restriction base="string">
+            <pattern value="[0-9]+(\.[0-9]+)*(-.+)?"/>
+        </restriction>
+    </simpleType>
+
+    <element name="since" type="lc:VersionType">
+        <annotation>
+            <documentation xml:lang="en">Describes since which version a XML Schema particle is available.</documentation>
+        </annotation>
+    </element>
+
+    <element name="defsince" type="lc:VersionType">
+        <annotation>
+            <documentation xml:lang="en">Describes since which version a XML Schema global definition is available.</documentation>
+        </annotation>
+    </element>
+
+    <element name="defdeprecated" type="lc:VersionType">
+        <annotation>
+            <documentation xml:lang="en">Describes since which version a XML Schema global definition is deprecated.</documentation>
+        </annotation>
+    </element>
+
+    <element name="deprecated" type="lc:VersionType">
+        <annotation>
+            <documentation xml:lang="en">Describes since which version a XML Schema particle is deprecated.</documentation>
+        </annotation>
+    </element>
+</schema>
