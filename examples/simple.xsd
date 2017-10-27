@@ -10,21 +10,58 @@
     </simpleType>
 
         <complexType name="AddressType" lc:defsince="1.0">
+            <annotation>
+                <documentation xml:lang="en">Address</documentation>
+                <documentation xml:lang="de">Adresse</documentation>
+            </annotation>
             <sequence>
-                <element name="street" type="simple:NonEmptyStringType" lc:since="1.0"/>
-                <element name="stree2" type="simple:NonEmptyStringType" minOccurs="0" lc:since="1.1"/>
-                <element name="city" type="simple:NonEmptyStringType" lc:since="1.0"/>
-                <element name="zip" type="simple:NonEmptyStringType" lc:since="1.0"/>
+                <element name="street" type="simple:NonEmptyStringType" lc:since="1.0">
+                        <annotation>
+                            <documentation xml:lang="en">Street name</documentation>
+                            <documentation xml:lang="de">Strassenname</documentation>
+                        </annotation>
+                </element>
+                <element name="street2" type="simple:NonEmptyStringType" minOccurs="0" lc:since="1.1"/>
+                <element name="city" type="simple:NonEmptyStringType" lc:since="1.0">
+                        <annotation>
+                            <documentation xml:lang="en">City</documentation>
+                            <documentation xml:lang="de">Stadt</documentation>
+                        </annotation>
+                </element>
+                <element name="zip" type="simple:NonEmptyStringType" lc:since="1.0">
+                        <annotation>
+                            <documentation xml:lang="en">ZIP Code</documentation>
+                            <documentation xml:lang="de">Postleitzahl</documentation>
+                        </annotation>
+                </element>
             </sequence>
         </complexType>
 
     <element name="address" type="simple:AddressType" lc:defsince="1.0"/>
 
     <complexType name="PersonType" lc:defsince="1.0">
+        <annotation>
+            <documentation>Person</documentation>
+        </annotation>
         <sequence>
-            <element name="givenName" type="string" lc:since="1.0" lc:deprecated="1.1"/>
-            <element name="firstName" type="string" lc:since="1.0"/>
-            <element name="lastName" type="string" lc:since="1.0"/>
+            <element name="givenName" type="string" minOccurs="0" lc:since="1.0" lc:deprecated="1.1">
+                    <annotation>
+                        <documentation xml:lang="en">Given name</documentation>
+                        <documentation xml:lang="de">Vorname</documentation>
+                    </annotation>
+            </element>
+            <element name="firstName" type="string" lc:since="1.0">
+                    <annotation>
+                        <documentation xml:lang="en">First name</documentation>
+                        <documentation xml:lang="de">Vorname</documentation>
+                    </annotation>
+            </element>
+            <element name="lastName" type="string" lc:since="1.0">
+                    <annotation>
+                        <documentation xml:lang="en">Last name</documentation>
+                        <documentation xml:lang="de">Nachname</documentation>
+                    </annotation>
+            </element>
         </sequence>
     </complexType>
 
@@ -33,10 +70,14 @@
     <element name="account" type="simple:PersonType" lc:defsince="1.0" lc:defdeprecated="1.2"/>
 
     <element name="businessPartner" lc:defsince="1.0">
+        <annotation>
+            <documentation xml:lang="en">Business partner</documentation>
+            <documentation xml:lang="de">Geschäftspartner</documentation>
+        </annotation>
         <complexType>
             <choice>
                 <element ref="simple:person" lc:since="1.0"/>
-                <element ref="simple:account" lc:since="1.1"/>
+                <element ref="simple:account" minOccurs="0" maxOccurs="unbounded" lc:since="1.1"/>
             </choice>
         </complexType>
     </element>
