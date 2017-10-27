@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:xsd:com.lookility.schemadoc.example.simple"
+        xmlns:simple="urn:xsd:com.lookility.schemadoc.example.simple"
+        xmlns:lc="urn:xsd:com.lookility.schemadoc.lifecycle:v1" version="1.2">
+
+    <simpleType name="NonEmptyStringType" lc:defsince="1.0">
+        <restriction base="string">
+            <minLength value="1"/>
+        </restriction>
+    </simpleType>
+
+        <complexType name="AddressType" lc:defsince="1.0">
+            <sequence>
+                <element name="street" type="simple:NonEmptyStringType" lc:since="1.0"/>
+                <element name="stree2" type="simple:NonEmptyStringType" minOccurs="0" lc:since="1.1"/>
+                <element name="city" type="simple:NonEmptyStringType" lc:since="1.0"/>
+                <element name="zip" type="simple:NonEmptyStringType" lc:since="1.0"/>
+            </sequence>
+        </complexType>
+
+    <element name="address" type="simple:AddressType" lc:defsince="1.0"/>
+
+    <complexType name="PersonType" lc:defsince="1.0">
+        <sequence>
+            <element name="givenName" type="string" lc:since="1.0" lc:deprecated="1.1"/>
+            <element name="firstName" type="string" lc:since="1.0"/>
+            <element name="lastName" type="string" lc:since="1.0"/>
+        </sequence>
+    </complexType>
+
+    <element name="person" type="simple:PersonType" lc:defsince="1.0"/>
+
+    <element name="account" type="simple:PersonType" lc:defsince="1.0" lc:defdeprecated="1.2"/>
+
+    <element name="businessPartner" lc:defsince="1.0">
+        <complexType>
+            <choice>
+                <element ref="simple:person" lc:since="1.0"/>
+                <element ref="simple:account" lc:since="1.1"/>
+            </choice>
+        </complexType>
+    </element>
+</schema>

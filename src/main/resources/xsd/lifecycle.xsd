@@ -10,27 +10,27 @@
         </restriction>
     </simpleType>
 
-    <element name="since" type="lc:VersionType">
+    <attribute name="since" type="lc:VersionType">
         <annotation>
             <documentation xml:lang="en">Describes since which version a XML Schema particle is available.</documentation>
         </annotation>
-    </element>
+    </attribute>
 
-    <element name="defsince" type="lc:VersionType">
+    <attribute name="defsince" type="lc:VersionType">
         <annotation>
             <documentation xml:lang="en">Describes since which version a XML Schema global definition is available.</documentation>
         </annotation>
-    </element>
+    </attribute>
 
-    <element name="defdeprecated" type="lc:VersionType">
+    <attribute name="defdeprecated" type="lc:VersionType">
         <annotation>
             <documentation xml:lang="en">Describes since which version a XML Schema global definition is deprecated.</documentation>
         </annotation>
-    </element>
+    </attribute>
 
-    <element name="deprecated" type="lc:VersionType">
+    <attribute name="deprecated" type="lc:VersionType">
         <annotation>
             <documentation xml:lang="en">Describes since which version a XML Schema particle is deprecated.</documentation>
         </annotation>
-    </element>
+    </attribute>
 </schema>
