@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox minHeight="-Infinity" minWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lookility.schemadoc.ui.SchemaDocController">
+   <children>
+      <MenuBar fx:id="menuBar">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem fx:id="menuOpen" mnemonicParsing="false" onAction="#handleMenuOpen" text="Open ...">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="O" control="UP" meta="DOWN" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem fx:id="menuReload" disable="true" mnemonicParsing="false" onAction="#handleMenuReload" text="Reload" />
+              <MenuItem fx:id="menuClose" disable="true" mnemonicParsing="false" onAction="#handleMenuClose" text="Close" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="menuExit" mnemonicParsing="false" onAction="#handleMenuExit" text="Exit">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Q" control="UP" meta="DOWN" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+            </items>
+          </Menu>
+            <Menu fx:id="menuLang" disable="true" mnemonicParsing="false" text="Language" />
+            <Menu mnemonicParsing="false" text="Help">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="About" />
+               </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+      <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" visible="false" VBox.vgrow="ALWAYS">
+        <tabs>
+          <Tab text="Untitled Tab 1">
+               <content>
+                  <TreeTableView fx:id="table1">
+                    <columns>
+                      <TreeTableColumn prefWidth="75.0" text="C1" />
+                      <TreeTableColumn editable="false" prefWidth="75.0" sortable="false" text="Name" />
+                        <TreeTableColumn editable="false" prefWidth="75.0" sortable="false" text="Occurance" />
+                        <TreeTableColumn editable="false" prefWidth="75.0" sortable="false" text="Version" />
+                        <TreeTableColumn editable="false" prefWidth="75.0" sortable="false" text="Description" />
+                    </columns>
+                  </TreeTableView>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+      <TextField fx:id="textField" editable="false" />
+   </children>
+</VBox>
