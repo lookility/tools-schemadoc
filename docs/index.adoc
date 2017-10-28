@@ -1,0 +1,3 @@
+# Schema Documentation Tool
+
+User friedly documentation of XML Schemas.
