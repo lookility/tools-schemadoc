@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class ExcelViewer implements TreeHandler {
 
-    private PathFormatter pathFormatter = new PathFormatter().withSuppressedAttributeIndicator(false).withSuppressedNamespace(false);
+    private PathFormatter pathFormatter = new PathFormatter(PathFormatter.NamespaceRepresentation.uriOnly);
 
     private Workbook wb;
     private Sheet currentSheet;
@@ -62,6 +62,7 @@ public class ExcelViewer implements TreeHandler {
         font.setBold(true);
         CellStyle cs = this.wb.createCellStyle();
         cs.setVerticalAlignment(VerticalAlignment.TOP);
+        cs.setLocked(true);
 
         cs.setFont(font);
 
@@ -90,11 +91,31 @@ public class ExcelViewer implements TreeHandler {
     }
 
     @Override
-    public void onContentNodeBegin(ContentNode node, boolean first, boolean last) {
+    public void onNodeBegin(ContentNode node, boolean first, boolean last) {
+        if (node instanceof GroupNode) return;
+        addRow(node);
+    }
+
+    @Override
+    public void onNodeEnd(ContentNode node, boolean first, boolean last) {
+    }
+
+    @Override
+    public void onAttribute(AttributeNode attrib, boolean first, boolean last) {
+        addRow(attrib);
+    }
+
+    @Override
+    public void onTreeEnd() {
+
+    }
+
+    private void addRow(Node node) {
         Row row = this.currentSheet.createRow(rowCount);
 
         CellStyle cs = this.wb.createCellStyle();
         cs.setVerticalAlignment(VerticalAlignment.TOP);
+        cs.setLocked(true);
 
         Cell cell;
 
@@ -111,7 +132,7 @@ public class ExcelViewer implements TreeHandler {
         cell.setCellStyle(cs);
 
         cell = row.createCell(3);
-        cell.setCellValue(node.getType());
+        cell.setCellValue(node.getType().orElse(""));
         cell.setCellStyle(cs);
 
         cell = row.createCell(4);
@@ -119,22 +140,5 @@ public class ExcelViewer implements TreeHandler {
         cell.setCellStyle(cs);
 
         this.rowCount++;
-    }
-
-    @Override
-    public void onContentNodeEnd(ContentNode node, boolean first, boolean last) {
-    }
-
-    @Override
-    public void onGroupNodeBegin(GroupNode group, boolean first, boolean last) {
-    }
-
-    @Override
-    public void onGroupNodeEnd(GroupNode group, boolean first, boolean last) {
-    }
-
-    @Override
-    public void onTreeEnd() {
-
     }
 }

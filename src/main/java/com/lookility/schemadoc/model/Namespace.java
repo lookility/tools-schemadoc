@@ -106,4 +106,11 @@ public class Namespace {
     public int hashCode() {
         return uri.hashCode();
     }
+
+    @Override
+    public String toString() {
+        if (this == NO_NAMESPACE) return "";
+
+        return "{" + this.uri + "}";
+    }
 }

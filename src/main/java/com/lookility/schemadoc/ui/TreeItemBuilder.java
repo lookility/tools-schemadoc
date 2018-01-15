@@ -1,28 +1,21 @@
 package com.lookility.schemadoc.ui;
 
-import com.lookility.schemadoc.model.ContentNode;
-import com.lookility.schemadoc.model.GroupNode;
-import com.lookility.schemadoc.model.PathFormatter;
-import com.lookility.schemadoc.model.TreeHandler;
+import com.lookility.schemadoc.model.*;
 import javafx.scene.control.TreeItem;
 
 public class TreeItemBuilder implements TreeHandler {
 
-    private final PathFormatter pathFormatter = new PathFormatter().withSuppressedAttributeIndicator(false).withSuppressedNamespace(false);
-
-    private final String language;
     private final boolean includeGroups;
 
-    private TreeItem<UINode> root;
-    private TreeItem<UINode> currentParent;
+    private TreeItem<Node> root;
+    private TreeItem<Node> currentParent;
 
 
-    public TreeItemBuilder(String language, boolean includeGroups) {
-        this.language = language;
+    public TreeItemBuilder(boolean includeGroups) {
         this.includeGroups = includeGroups;
     }
 
-    public TreeItem<UINode> getRoot() {
+    public TreeItem<Node> getRoot() {
         return this.root;
     }
 
@@ -32,28 +25,11 @@ public class TreeItemBuilder implements TreeHandler {
     }
 
     @Override
-    public void onContentNodeBegin(ContentNode node, boolean first, boolean last) {
-        UINode n = new UINode();
-        if (!this.includeGroups && node.isAttribute()) {
-            n.name = "@" + node.getNodeName().getName();
-        } else {
-            n.name = node.getNodeName().getName();
-        }
-        n.occurrence = node.getOccurrence().getShortName();
+    public void onNodeBegin(ContentNode node, boolean first, boolean last) {
+        if (node instanceof GroupNode && !this.includeGroups) return;
 
-        StringBuilder version = new StringBuilder();
-        node.getLifeCycle().getSinceVersion().ifPresent(version::append);
-        node.getLifeCycle().getDeprecated().ifPresent(v -> {
-            if (version.length() > 0) version.append(' ');
-            version.append("(! ").append(v).append(')');
-        });
-        n.version = version.toString();
-        n.description = node.getDocumentation().getText(this.language);
-        n.currentPath = this.pathFormatter.formatPath(node);
-        n.type = node.getType();
-        n.baseType = node.getBaseType().name();
+        TreeItem<Node> item = new TreeItem<>(node);
 
-        TreeItem<UINode> item = new TreeItem<>(n);
         if (this.root == null) {
             this.root = item;
             this.currentParent = item;
@@ -67,31 +43,18 @@ public class TreeItemBuilder implements TreeHandler {
     }
 
     @Override
-    public void onContentNodeEnd(ContentNode node, boolean first, boolean last) {
+    public void onNodeEnd(ContentNode node, boolean first, boolean last) {
+        if (node instanceof GroupNode && !this.includeGroups) return;
+
         if (!node.isLeaf()) {
             this.currentParent = this.currentParent.getParent();
         }
     }
 
     @Override
-    public void onGroupNodeBegin(GroupNode group, boolean first, boolean last) {
-        if (this.includeGroups) {
-            UINode n = new UINode();
-            n.name = group.getType().toString();
-            n.occurrence = group.getOccurrence().toString();
-
-            TreeItem<UINode> item = new TreeItem<>(n);
-            item.setExpanded(true);
-            this.currentParent.getChildren().add(item);
-            this.currentParent = item;
-        }
-    }
-
-    @Override
-    public void onGroupNodeEnd(GroupNode group, boolean first, boolean last) {
-        if (this.includeGroups) {
-            this.currentParent = this.currentParent.getParent();
-        }
+    public void onAttribute(AttributeNode attrib, boolean first, boolean last) {
+        TreeItem<Node> item = new TreeItem<>(attrib);
+        this.currentParent.getChildren().add(item);
     }
 
     @Override

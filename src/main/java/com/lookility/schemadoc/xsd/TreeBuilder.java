@@ -79,7 +79,6 @@ class TreeBuilder {
 
         XmlSchemaType elementType = element.getSchemaType();
         if (elementType != null) {
-
             if (elementType instanceof XmlSchemaSimpleType) {
                 enhanceNode(node, (XmlSchemaSimpleType) elementType);
             } else if (elementType instanceof XmlSchemaComplexType) {
@@ -136,7 +135,21 @@ class TreeBuilder {
             node.setType(buildTypeName(baseTypeQName));
         }
 
-        node.setBaseType(BaseType.complex);
+        // Base type
+        BaseType baseType = BaseType.complex;
+        XmlSchemaContentModel contentModel = complexElementType.getContentModel();
+        if (contentModel != null && contentModel instanceof XmlSchemaSimpleContent) {
+            XmlSchemaContent content = contentModel.getContent();
+
+            if (content instanceof XmlSchemaSimpleContentExtension) {
+                baseType = determineSimpleBaseType(((XmlSchemaSimpleContentExtension) content).getBaseTypeName());
+            } else if (content instanceof  XmlSchemaSimpleContentRestriction) {
+                baseType = determineSimpleBaseType(((XmlSchemaSimpleContentRestriction) content).getBaseTypeName());
+            } else {
+                baseType = BaseType.unknown;
+            }
+        }
+        node.setBaseType(baseType);
 
         // Attributes
         addAttributeGroup(node, complexElementType);
@@ -169,7 +182,7 @@ class TreeBuilder {
         addParticle(node, complexType.getParticle());
     }
 
-    private void addParticle(Node node, XmlSchemaParticle particle) throws ModelBuilderException {
+    private void addParticle(ContentNode node, XmlSchemaParticle particle) throws ModelBuilderException {
         if (particle == null)
             return;
 
@@ -177,10 +190,15 @@ class TreeBuilder {
 
         if (particle instanceof XmlSchemaSequence) {
             group = new GroupNode(GroupNodeType.sequence);
-            node.addChild(group);
+            node.add(group);
             for (XmlSchemaSequenceMember sm : ((XmlSchemaSequence) particle).getItems()) {
                 if (sm instanceof XmlSchemaElement) {
-                    group.addChild(buildContentNode((XmlSchemaElement) sm));
+                    XmlSchemaElement element = (XmlSchemaElement) sm;
+                    try {
+                        group.add(buildContentNode(element));
+                    } catch (DuplicateNodeException e) {
+                        handleDuplicateChild(element.getQName(), element);
+                    }
                 } else if (sm instanceof XmlSchemaParticle) {
                     addParticle(group, (XmlSchemaParticle) sm);
                 } else {
@@ -189,10 +207,15 @@ class TreeBuilder {
             }
         } else if (particle instanceof XmlSchemaChoice) {
             group = new GroupNode(GroupNodeType.choice);
-            node.addChild(group);
+            node.add(group);
             for (XmlSchemaChoiceMember cm : ((XmlSchemaChoice) particle).getItems()) {
                 if (cm instanceof XmlSchemaElement) {
-                    group.addChild(buildContentNode((XmlSchemaElement) cm));
+                    XmlSchemaElement element = (XmlSchemaElement) cm;
+                    try {
+                        group.add(buildContentNode(element));
+                    } catch (DuplicateNodeException e) {
+                        handleDuplicateChild(element.getQName(), element);
+                    }
                 } else if (cm instanceof XmlSchemaParticle) {
                     addParticle(group, (XmlSchemaParticle) cm);
                 } else {
@@ -201,10 +224,15 @@ class TreeBuilder {
             }
         } else if (particle instanceof XmlSchemaAll) {
             group = new GroupNode(GroupNodeType.all);
-            node.addChild(group);
+            node.add(group);
             for (XmlSchemaAllMember am : ((XmlSchemaAll) particle).getItems()) {
                 if (am instanceof XmlSchemaElement) {
-                    group.addChild(buildContentNode((XmlSchemaElement) am));
+                    XmlSchemaElement element = (XmlSchemaElement) am;
+                    try {
+                        group.add(buildContentNode(element));
+                    } catch (DuplicateNodeException e) {
+                        handleDuplicateChild(element.getQName(), element);
+                    }
                 } else if (am instanceof XmlSchemaParticle) {
                     addParticle(group, (XmlSchemaParticle) am);
                 } else {
@@ -240,6 +268,12 @@ class TreeBuilder {
                 } else {
                     handleUnsupportedFeature("complex content", content);
                 }
+            } else if (contentModel instanceof XmlSchemaSimpleContent) {
+                XmlSchemaContent content = contentModel.getContent();
+                if (content instanceof XmlSchemaSimpleContentExtension) {
+                    XmlSchemaSimpleContentExtension ext = (XmlSchemaSimpleContentExtension) content;
+                    addAttributeGroup(node, ext.getAttributes());
+                }
             }
         }
 
@@ -252,12 +286,10 @@ class TreeBuilder {
 
         if (attributes.isEmpty()) return;
 
-        GroupNode group = new GroupNode(GroupNodeType.attributes);
-        node.addChild(group);
         for (XmlSchemaAttributeOrGroupRef aog : attributes) {
             if (aog instanceof XmlSchemaAttribute) {
                 XmlSchemaAttribute attribute = (XmlSchemaAttribute) aog;
-                ContentNode attributeNode = new ContentNode((buildName(attribute.getQName())), true);
+                AttributeNode attributeNode = new AttributeNode(buildName(attribute.getQName()));
                 if (!addDocumentation(attributeNode, attribute)) {
                     addDocumentation(attributeNode, attribute.getSchemaType(), attribute.getSchemaTypeName());
                 }
@@ -266,7 +298,11 @@ class TreeBuilder {
                 attributeNode.setBaseType(determineSimpleBaseType(attribute.getSchemaTypeName()));
                 attributeNode.setLifeCycle(getLifeCycle(attribute));
 
-                group.addChild(attributeNode);
+                try {
+                    node.add(attributeNode);
+                }  catch (DuplicateNodeException e) {
+                    handleDuplicateChild(attribute.getQName(), attribute);
+                }
             } else {
                 handleUnsupportedFeature("attributes", aog);
             }
@@ -362,5 +398,15 @@ class TreeBuilder {
             throw new UnsupportedFeatureException(feature, location);
         }
         this.errorHandler.onUnsupportedFeature(this.rootElementName, feature, location);
+    }
+
+    private void handleDuplicateChild(QName qname, XmlSchemaObjectBase base) {
+        Location location = new Location(base);
+
+        if (this.errorHandler == null) {
+            throw new DuplicateChildException(qname, location);
+        }
+
+        this.errorHandler.onDuplicateNote(this.rootElementName, qname, location);
     }
 }

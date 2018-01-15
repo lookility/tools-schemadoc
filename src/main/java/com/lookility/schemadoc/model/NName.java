@@ -47,13 +47,7 @@ public class NName {
      */
     @Override
     public String toString() {
-        StringBuilder out = new StringBuilder();
-        if (!this.namespace.getPrefix().isEmpty()) {
-            out.append(this.namespace.getPrefix());
-            out.append(':');
-        }
-        out.append(this.name);
-        return out.toString();
+        return this.namespace.toString() + this.name;
     }
 
     @Override

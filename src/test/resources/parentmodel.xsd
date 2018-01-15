@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:xsd:parentmodel" xmlns:p="urn:xsd:parentmodel"
+        xmlns:lc="urn:lifecycle" xmlns:m="urn:xsd:simplemodel" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <import namespace="urn:xsd:simplemodel" schemaLocation="./simplemodel.xsd"/>
+
+    <element name="parent" lc:defsince="1.0">
+        <complexType>
+            <sequence>
+                <element ref="m:moreComplexRoot" lc:since="1.0"/>
+            </sequence>
+        </complexType>
+    </element>
+</schema>

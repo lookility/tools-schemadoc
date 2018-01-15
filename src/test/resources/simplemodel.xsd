@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:xsd:simplemodel" xmlns:m="urn:xsd:simplemodel"
+        xmlns:lc="urn:lifecycle" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <simpleType name="CodeType" lc:defsince="1.0">
+        <annotation>
+            <documentation>An arbitrary code.</documentation>
+        </annotation>
+        <restriction base="string"/>
+    </simpleType>
+
+    <element name="root" type="string"></element>
+
+    <element name="complexRoot">
+        <complexType>
+            <sequence>
+                <element name="e" type="string"/>
+            </sequence>
+            <attribute name="a1" type="string"/>
+            <attribute name="a2" type="string"/>
+        </complexType>
+    </element>
+
+    <element name="topLevel" type="string" lc:defsince="1.0"/>
+
+    <complexType name="BaseType">
+        <sequence>
+            <element name="baseE1" type="string">
+                <annotation>
+                    <documentation>Doc <b>bold</b> baseE1</documentation>
+                    <documentation xml:lang="de">Dokumentation</documentation>
+                </annotation>
+            </element>
+        </sequence>
+        <attribute name="baseA1" type="string">
+                <annotation>
+                    <documentation>Multi line
+                    documentation.</documentation>
+                </annotation>
+        </attribute>
+    </complexType>
+
+    <complexType name="SuperType">
+        <annotation>
+            <documentation>Complex type</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="m:BaseType">
+                <sequence>
+                    <element name="e" type="string" maxOccurs="unbounded">
+                            <annotation>
+                                <documentation>An element</documentation>
+                            </annotation>
+                    </element>
+                    <element name="anonyComplex" minOccurs="0">
+                        <complexType>
+                            <sequence>
+                                <element name="e1" type="string" minOccurs="0" maxOccurs="unbounded"/>
+                                <element name="e2" type="string"/>
+                            </sequence>
+                        </complexType>
+                    </element>
+                    <element name="simpleCurrency">
+                        <annotation>
+                            <documentation>An amount including currency.</documentation>
+                        </annotation>
+                        <complexType>
+                            <simpleContent>
+                                <extension base="decimal">
+                                    <attribute name="currency" type="string" use="required"/>
+                                </extension>
+                            </simpleContent>
+                        </complexType>
+                    </element>
+                    <choice>
+                        <element name="c1" type="string" minOccurs="0"/>
+                        <element name="c2" type="m:CodeType" lc:since="1.0"/>
+                        <element ref="m:topLevel" lc:since="1.0"/>
+                    </choice>
+                </sequence>
+                <attribute name="a1" type="m:CodeType" lc:since="1.0"/>
+                <attribute name="a2" type="string" lc:since="1.1.0" lc:deprecated="true"/>
+                <attribute name="a3" type="m:CodeType">
+                    <annotation>
+                        <documentation>Code attribute</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="moreComplexRoot" type="m:SuperType" lc:defsince="1.0"/>
+
+    <element name="amount">
+        <annotation>
+            <documentation>An amount including currency.</documentation>
+        </annotation>
+        <complexType>
+            <simpleContent>
+                <extension base="decimal">
+                    <attribute name="currency" type="string"/>
+                </extension>
+            </simpleContent>
+        </complexType>
+    </element>
+</schema>

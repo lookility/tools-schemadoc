@@ -32,6 +32,7 @@
             </items>
           </Menu>
             <Menu fx:id="menuLang" disable="true" mnemonicParsing="false" text="Language" />
+            <Menu fx:id="menuColumns" disable="true" mnemonicParsing="false" text="Columns" />
             <Menu mnemonicParsing="false" text="Help">
                <items>
                   <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="About" />

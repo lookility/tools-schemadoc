@@ -1,5 +1,6 @@
 package com.lookility.schemadoc.model;
 
+import javax.swing.text.AbstractDocument;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +20,7 @@ public class TreeWalker {
         this.handler.onTreeEnd();
     }
 
-    private void handleChildren(Optional<List<Node>> children) {
+    private void handleChildren(Optional<List<ContentNode>> children) {
         if (children.isPresent()) {
             int index = 0;
             int lastIndex = children.get().size() - 1;
@@ -33,8 +34,6 @@ public class TreeWalker {
                 last = (index == lastIndex);
                 if (child instanceof ContentNode) {
                     handleContentNode((ContentNode) child, first, last);
-                } else if (child instanceof GroupNode) {
-                    handleGroupNode((GroupNode) child, first, last);
                 } else {
                     throw new IllegalStateException("unsupported node type: " + child.getClass().getCanonicalName());
                 }
@@ -44,18 +43,30 @@ public class TreeWalker {
     }
 
     private void handleContentNode(ContentNode node, boolean first, boolean last) {
-        this.handler.onContentNodeBegin(node, first, last);
+        this.handler.onNodeBegin(node, first, last);
 
+        handleAttributes(node.getAttributes());
         handleChildren(node.getChildren());
 
-        this.handler.onContentNodeEnd(node, first, last);
+        this.handler.onNodeEnd(node, first, last);
     }
 
-    private void handleGroupNode(GroupNode group, boolean first, boolean last) {
-        this.handler.onGroupNodeBegin(group, first, last);
+    private void handleAttributes(Optional<List<AttributeNode>> attributes) {
+        if (attributes.isPresent()) {
+            int index = 0;
+            int lastIndex = attributes.get().size() - 1;
+            AttributeNode attribute;
+            boolean first;
+            boolean last;
 
-        handleChildren(group.getChildren());
-
-        this.handler.onGroupNodeEnd(group, first, last);
+            while(index <= lastIndex) {
+                attribute = attributes.get().get(index);
+                first = (index == 0);
+                last = (index == lastIndex);
+                this.handler.onAttribute(attribute, first, last);
+                index++;
+            }
+        }
     }
+
 }

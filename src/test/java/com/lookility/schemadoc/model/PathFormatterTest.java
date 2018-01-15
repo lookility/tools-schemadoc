@@ -10,40 +10,30 @@ public class PathFormatterTest  {
 
     private Tree tree;
     private ContentNode child;
-    private ContentNode attrib;
+    private AttributeNode attrib;
 
 
     @BeforeEach
-    public void treeSetup() {
+    public void treeSetup() throws Exception {
         tree = new Tree("unittest");
         Namespace ns = tree.registerNamespace("urn:xsd:unittest", "ut");
 
         ContentNode root = new ContentNode(new NName(ns, "root"));
         tree.setRoot(root);
 
-        GroupNode attributeGroup = new GroupNode(GroupNodeType.attributes);
-        attrib = new ContentNode(new NName(tree.registerNamespace(null), "attrib"), true);
-        attributeGroup.addChild(attrib);
+        attrib = new AttributeNode(new NName(tree.registerNamespace(null), "attrib"));
+        root.add(attrib);
 
         GroupNode sequenceGroup = new GroupNode(GroupNodeType.sequence);
         child = new ContentNode(new NName(ns, "child"));
-        sequenceGroup.addChild(child);
+        sequenceGroup.add(child);
 
-        root.addChild(attributeGroup);
-        root.addChild(sequenceGroup);
-    }
-
-    @Test
-    public void constructPathFormatter() {
-        PathFormatter pf = new PathFormatter();
-
-        assertSame(pf, pf.withSuppressedAttributeIndicator(false));
-        assertSame(pf, pf.withSuppressedAttributeIndicator(false));
+        root.add(sequenceGroup);
     }
 
     @Test
     public void buildPath() {
-        PathFormatter pf = new PathFormatter();
+        PathFormatter pf = new PathFormatter(PathFormatter.NamespaceRepresentation.prefixOnly);
 
         assertEquals("/ut:root/ut:child", pf.formatPath(this.child));
         assertEquals("/ut:root/@attrib", pf.formatPath(this.attrib));
@@ -51,25 +41,25 @@ public class PathFormatterTest  {
 
     @Test
     public void buildPathWithoutNamespace() {
-        PathFormatter pf = new PathFormatter().withSuppressedNamespace(true);
+        PathFormatter pf = new PathFormatter(PathFormatter.NamespaceRepresentation.none);
 
         assertEquals("/root/child", pf.formatPath(this.child));
         assertEquals("/root/@attrib", pf.formatPath(this.attrib));
     }
 
     @Test
-    public void buildPathWithoutAttributeIndicator() {
-        PathFormatter pf = new PathFormatter().withSuppressedAttributeIndicator(true);
+    public void buildPathWithFullNamespace() {
+        PathFormatter pf = new PathFormatter(PathFormatter.NamespaceRepresentation.uriAndPrefix);
 
-        assertEquals("/ut:root/ut:child", pf.formatPath(this.child));
-        assertEquals("/ut:root/attrib", pf.formatPath(this.attrib));
+        assertEquals("/{urn:xsd:unittest}ut:root/{urn:xsd:unittest}ut:child", pf.formatPath(this.child));
+        assertEquals("/{urn:xsd:unittest}ut:root/@attrib", pf.formatPath(this.attrib));
     }
 
     @Test
-    public void buildPathWithoutNamespaceAndAttributeIndicator() {
-        PathFormatter pf = new PathFormatter().withSuppressedNamespace(true).withSuppressedAttributeIndicator(true);
+    public void buildPathWithNamespaceURI() {
+        PathFormatter pf = new PathFormatter(PathFormatter.NamespaceRepresentation.uriOnly);
 
-        assertEquals("/root/child", pf.formatPath(this.child));
-        assertEquals("/root/attrib", pf.formatPath(this.attrib));
+        assertEquals("/{urn:xsd:unittest}root/{urn:xsd:unittest}child", pf.formatPath(this.child));
+        assertEquals("/{urn:xsd:unittest}root/@attrib", pf.formatPath(this.attrib));
     }
 }

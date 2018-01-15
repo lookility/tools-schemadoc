@@ -23,7 +23,7 @@ public class TreeContainer {
 
     public Tree get(NName root) {
         for(Tree tree : this.trees) {
-            if (tree.getRoot().getNodeName().equals(root))
+            if (tree.getRoot().getName().equals(root))
                 return tree;
         }
         return null;

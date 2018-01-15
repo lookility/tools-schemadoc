@@ -9,13 +9,22 @@ import java.util.Map;
  * @see Namespace
  */
 public class NamespaceSet {
+    private static final String GROUP_URI = "urn:xsd:com.lookility.schemadoc.group:v1";
+    private static final String GROUP_PREFIX = "group";
 
     private int genericPrefixCount = 1;
 
     private Map<String, Namespace> namespacesByPrefix = new HashMap<>();
     private Map<String, Namespace> namespacesByURI = new HashMap<>();
 
+    private final Namespace groupNamespace;
+
     NamespaceSet() {
+        this.groupNamespace = registerNamespace(GROUP_URI, GROUP_PREFIX);
+    }
+
+    public Namespace getGroupNamespace() {
+        return this.groupNamespace;
     }
 
     /**

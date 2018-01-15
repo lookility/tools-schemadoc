@@ -4,7 +4,6 @@ import com.lookility.schemadoc.model.*;
 
 public class TextViewer implements TreeHandler {
 
-
     private final StringBuilder text = new StringBuilder();
     private final String language;
 
@@ -27,13 +26,37 @@ public class TextViewer implements TreeHandler {
 
 
     @Override
-    public void onContentNodeBegin(ContentNode node, boolean first, boolean last) {
+    public void onNodeBegin(ContentNode node, boolean first, boolean last) {
+        addNode(node, "", first, last);
+
+        if (!node.isRoot()) {
+            increaseIndent(last);
+        }
+    }
+
+    @Override
+    public void onNodeEnd(ContentNode node, boolean first, boolean last) {
+        decreaseIndent();
+    }
+
+    @Override
+    public void onAttribute(AttributeNode attrib, boolean first, boolean last) {
+        addNode(attrib, "@", first, last);
+    }
+
+    @Override
+    public void onTreeEnd() {
+
+    }
+
+    private void addNode(Node node, String namePrefix, boolean first, boolean last) {
         appendIndent();
         if (!node.isRoot()) {
             appendNodeMarker(last, node.getOccurrence());
         }
-        this.text.append(node.getNodeName());
-        this.text.append(" [").append(node.getType()).append("]");
+        this.text.append(namePrefix);
+        this.text.append(node.getName());
+        this.text.append(" [").append(node.getType().orElse("")).append("]");
 
         appendLifeCycle(node.getLifeCycle());
 
@@ -44,35 +67,6 @@ public class TextViewer implements TreeHandler {
         }
 
         this.text.append('\n');
-
-        if (!node.isRoot()) {
-            increaseIndent(last);
-        }
-    }
-
-    @Override
-    public void onContentNodeEnd(ContentNode node, boolean first, boolean last) {
-        decreaseIndent();
-    }
-
-    @Override
-    public void onGroupNodeBegin(GroupNode group, boolean first, boolean last) {
-        appendIndent();
-        appendNodeMarker(last, group.getOccurrence());
-        this.text.append('(').append(group.getType()).append(')'
-        );
-        this.text.append('\n');
-        increaseIndent(last);
-    }
-
-    @Override
-    public void onGroupNodeEnd(GroupNode group, boolean first, boolean last) {
-        decreaseIndent();
-    }
-
-    @Override
-    public void onTreeEnd() {
-
     }
 
     private void increaseIndent(boolean last) {
