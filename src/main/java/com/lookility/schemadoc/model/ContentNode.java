@@ -10,8 +10,6 @@ import java.util.Properties;
  */
 public class ContentNode extends Node {
 
-    public static final List<AttributeNode> EMPTY_ATTRIBUTES = new ArrayList<AttributeNode>();
-
     private Optional<List<ContentNode>> children = Optional.empty();
     private Optional<List<AttributeNode>> attributes = Optional.empty();
 
