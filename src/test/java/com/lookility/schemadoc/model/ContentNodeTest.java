@@ -2,7 +2,6 @@ package com.lookility.schemadoc.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.sun.xml.internal.rngom.parse.host.Base;
 import org.junit.jupiter.api.Test;
 
 public class ContentNodeTest {
