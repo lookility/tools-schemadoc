@@ -1,9 +1,7 @@
 package com.lookility.schemadoc.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.Properties;
 
 
 /**
@@ -97,5 +95,26 @@ public abstract class Node {
     @Override
     public String toString() {
         return this.name.toString();
+    }
+
+    /**
+     * Check if node is equal to other node.
+     * <p>Two nodes are equal if they have an equal name and an equal base type and type.</p>
+     * @param o other node to compare with
+     * @return <i>true</i> if nodes are equal, <i>false</i> otherwise
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Node node = (Node) o;
+        return Objects.equals(name, node.name) &&
+                baseType == node.baseType &&
+                Objects.equals(type, node.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, baseType, type);
     }
 }
