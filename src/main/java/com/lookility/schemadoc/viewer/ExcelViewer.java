@@ -92,7 +92,6 @@ public class ExcelViewer implements TreeHandler {
 
     @Override
     public void onNodeBegin(ContentNode node, boolean first, boolean last) {
-        if (node instanceof GroupNode) return;
         addRow(node);
     }
 

@@ -24,11 +24,9 @@ public class PathFormatterTest  {
         attrib = new AttributeNode(new NName(tree.registerNamespace(null), "attrib"));
         root.add(attrib);
 
-        GroupNode sequenceGroup = new GroupNode(GroupNodeType.sequence);
         child = new ContentNode(new NName(ns, "child"));
-        sequenceGroup.add(child);
 
-        root.add(sequenceGroup);
+        root.add(child);
     }
 
     @Test

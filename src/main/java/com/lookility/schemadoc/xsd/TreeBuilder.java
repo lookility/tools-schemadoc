@@ -186,65 +186,53 @@ class TreeBuilder {
         if (particle == null)
             return;
 
-        GroupNode group = null;
-
         if (particle instanceof XmlSchemaSequence) {
-            group = new GroupNode(GroupNodeType.sequence);
-            node.add(group);
             for (XmlSchemaSequenceMember sm : ((XmlSchemaSequence) particle).getItems()) {
                 if (sm instanceof XmlSchemaElement) {
                     XmlSchemaElement element = (XmlSchemaElement) sm;
                     try {
-                        group.add(buildContentNode(element));
+                        node.add(buildContentNode(element));
                     } catch (DuplicateNodeException e) {
                         handleDuplicateChild(element.getQName(), element);
                     }
                 } else if (sm instanceof XmlSchemaParticle) {
-                    addParticle(group, (XmlSchemaParticle) sm);
+                    addParticle(node, (XmlSchemaParticle) sm);
                 } else {
                     handleUnsupportedFeature("sequence member", sm);
                 }
             }
         } else if (particle instanceof XmlSchemaChoice) {
-            group = new GroupNode(GroupNodeType.choice);
-            node.add(group);
             for (XmlSchemaChoiceMember cm : ((XmlSchemaChoice) particle).getItems()) {
                 if (cm instanceof XmlSchemaElement) {
                     XmlSchemaElement element = (XmlSchemaElement) cm;
                     try {
-                        group.add(buildContentNode(element));
+                        node.add(buildContentNode(element));
                     } catch (DuplicateNodeException e) {
                         handleDuplicateChild(element.getQName(), element);
                     }
                 } else if (cm instanceof XmlSchemaParticle) {
-                    addParticle(group, (XmlSchemaParticle) cm);
+                    addParticle(node, (XmlSchemaParticle) cm);
                 } else {
                     handleUnsupportedFeature("choice member", cm);
                 }
             }
         } else if (particle instanceof XmlSchemaAll) {
-            group = new GroupNode(GroupNodeType.all);
-            node.add(group);
             for (XmlSchemaAllMember am : ((XmlSchemaAll) particle).getItems()) {
                 if (am instanceof XmlSchemaElement) {
                     XmlSchemaElement element = (XmlSchemaElement) am;
                     try {
-                        group.add(buildContentNode(element));
+                        node.add(buildContentNode(element));
                     } catch (DuplicateNodeException e) {
                         handleDuplicateChild(element.getQName(), element);
                     }
                 } else if (am instanceof XmlSchemaParticle) {
-                    addParticle(group, (XmlSchemaParticle) am);
+                    addParticle(node, (XmlSchemaParticle) am);
                 } else {
                     handleUnsupportedFeature("all member", am);
                 }
             }
         } else {
             handleUnsupportedFeature("complex type particle", particle);
-        }
-
-        if (group != null) {
-            group.setOccurrence(Occurrence.fromMinMax(particle.getMinOccurs(), particle.getMaxOccurs()));
         }
     }
 

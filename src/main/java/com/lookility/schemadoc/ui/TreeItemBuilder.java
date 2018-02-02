@@ -5,14 +5,11 @@ import javafx.scene.control.TreeItem;
 
 public class TreeItemBuilder implements TreeHandler {
 
-    private final boolean includeGroups;
-
     private TreeItem<Node> root;
     private TreeItem<Node> currentParent;
 
 
-    public TreeItemBuilder(boolean includeGroups) {
-        this.includeGroups = includeGroups;
+    public TreeItemBuilder() {
     }
 
     public TreeItem<Node> getRoot() {
@@ -26,8 +23,6 @@ public class TreeItemBuilder implements TreeHandler {
 
     @Override
     public void onNodeBegin(ContentNode node, boolean first, boolean last) {
-        if (node instanceof GroupNode && !this.includeGroups) return;
-
         TreeItem<Node> item = new TreeItem<>(node);
 
         if (this.root == null) {
@@ -44,8 +39,6 @@ public class TreeItemBuilder implements TreeHandler {
 
     @Override
     public void onNodeEnd(ContentNode node, boolean first, boolean last) {
-        if (node instanceof GroupNode && !this.includeGroups) return;
-
         if (!node.isLeaf()) {
             this.currentParent = this.currentParent.getParent();
         }

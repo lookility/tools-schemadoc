@@ -31,9 +31,7 @@ public abstract class AbstractPathFormatter {
         List<Node> reverseNodePath = new ArrayList<>();
 
         while (node != null) {
-            if (!(node instanceof GroupNode)) {
-                reverseNodePath.add(node);
-            }
+            reverseNodePath.add(node);
             node = node.getParent();
         }
 

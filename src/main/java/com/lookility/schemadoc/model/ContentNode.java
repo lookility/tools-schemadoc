@@ -24,30 +24,17 @@ public class ContentNode extends Node {
         super(name);
     }
 
-    public void add(GroupNode group) {
-        if (!this.children.isPresent()) {
-            this.children = Optional.of(new ArrayList<ContentNode>());
-        }
-        group.setParent(this);
-
-        this.children.get().add(group);
-
-        LOGGER.debug("group node {} added to {}", group.getName(), getName());
-    }
-
     public void add(ContentNode node) throws DuplicateNodeException {
         if (!this.children.isPresent()) {
             this.children = Optional.of(new ArrayList<ContentNode>());
         }
 
-        if (!(node instanceof GroupNode)) {
-            Optional<ContentNode> child = getChild(node.getName());
-            if (child.isPresent()) {
-                if (child.get().equals(node)) {
-                    LOGGER.warn("equal child node {} already exists; node ignored");
-                } else {
-                    throw new DuplicateNodeException(this, node);
-                }
+        Optional<ContentNode> child = getChild(node.getName());
+        if (child.isPresent()) {
+            if (child.get().equals(node)) {
+                LOGGER.warn("equal child node {} already exists; node ignored");
+            } else {
+                throw new DuplicateNodeException(this, node);
             }
         }
 
@@ -66,7 +53,7 @@ public class ContentNode extends Node {
         if (name == null) return NO_CHILD;
         if (!this.children.isPresent()) return NO_CHILD;
 
-        for(ContentNode node : this.children.get()) {
+        for (ContentNode node : this.children.get()) {
             if (node.getName().equals(name))
                 return Optional.of(node);
         }
@@ -100,7 +87,7 @@ public class ContentNode extends Node {
         if (name == null) return NO_ATTRIB;
         if (!this.attributes.isPresent()) return NO_ATTRIB;
 
-        for(AttributeNode attrib : this.attributes.get()) {
+        for (AttributeNode attrib : this.attributes.get()) {
             if (attrib.getName().equals(name))
                 return Optional.of(attrib);
         }

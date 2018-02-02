@@ -286,7 +286,7 @@ public class SchemaDocController {
     }
 
     private TreeItem<Node> buildTree(Tree tree, String language) {
-        TreeItemBuilder tib = new TreeItemBuilder(false);
+        TreeItemBuilder tib = new TreeItemBuilder();
         new TreeWalker(tib).walk(tree);
         return tib.getRoot();
     }
