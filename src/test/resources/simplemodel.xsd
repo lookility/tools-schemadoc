@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:xsd:simplemodel" xmlns:m="urn:xsd:simplemodel"
-        xmlns:lc="urn:lifecycle" elementFormDefault="qualified" attributeFormDefault="unqualified">
+        xmlns:lc="urn:xsd:com.lookility.schemadoc.lifecycle:v1" elementFormDefault="qualified" attributeFormDefault="unqualified">
     <simpleType name="CodeType" lc:defsince="1.0">
         <annotation>
             <documentation>An arbitrary code.</documentation>
