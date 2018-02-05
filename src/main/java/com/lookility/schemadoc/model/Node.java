@@ -16,10 +16,23 @@ public abstract class Node {
     private Optional<String> type = Optional.empty();
     private Documentation documentation;
     private LifeCycleMetaData lifeCycle = LifeCycleMetaData.DEFAULT_LIFECYCLE;
+    private Optional<Version> version = Optional.empty();
 
     protected Node(NName name) {
         if (name == null) throw new IllegalArgumentException("node name must not be null");
         this.name = name;
+    }
+
+    public void setVersion(Version version) {
+        if (version == null) {
+            this.version = Optional.empty();
+        } else {
+            this.version = Optional.of(version);
+        }
+    }
+
+    public Optional<Version> getVersion() {
+        return this.version;
     }
 
     public NName getName() {

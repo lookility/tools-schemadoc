@@ -1,5 +1,6 @@
 package com.lookility.schemadoc.model;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -56,5 +57,25 @@ public class Tree extends NamespaceSet {
 
         tw.walk(this);
         return ls.getAvailableLanguages();
+    }
+
+    public Optional<Version> getMaxVersion() {
+        VersionScanner vs = new VersionScanner();
+        TreeWalker tw = new TreeWalker(vs);
+        tw.walk(this);
+        return vs.getMaxVersion();
+    }
+
+    public void applyVersion(Version version) {
+        if (version == null) throw new IllegalArgumentException("version must not be null");
+        Optional<Version> maxVersion = getMaxVersion();
+        if (maxVersion.isPresent()) {
+            if (maxVersion.get().compareTo(version) > 0) {
+                throw new IllegalArgumentException("version '" + version + "' has to be greater than max. tree version '"+ maxVersion.get() + "'");
+            }
+        }
+        VersionSetter vs = new VersionSetter(version);
+        TreeWalker tw = new TreeWalker(vs);
+        tw.walk(this);
     }
 }
