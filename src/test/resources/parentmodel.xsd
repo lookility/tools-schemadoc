@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:xsd:parentmodel" xmlns:p="urn:xsd:parentmodel"
-        xmlns:lc="urn:xsd:com.lookility.schemadoc.lifecycle:v1" xmlns:m="urn:xsd:simplemodel" elementFormDefault="qualified" attributeFormDefault="unqualified">
+        xmlns:m="urn:xsd:simplemodel" elementFormDefault="qualified" attributeFormDefault="unqualified">
     <import namespace="urn:xsd:simplemodel" schemaLocation="./simplemodel.xsd"/>
 
-    <element name="parent" lc:defsince="1.0">
+    <element name="parent">
         <complexType>
             <sequence>
-                <element ref="m:moreComplexRoot" lc:since="1.0"/>
+                <element ref="m:moreComplexRoot"/>
             </sequence>
         </complexType>
     </element>

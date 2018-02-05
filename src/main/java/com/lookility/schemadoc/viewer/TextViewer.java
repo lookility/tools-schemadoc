@@ -2,6 +2,8 @@ package com.lookility.schemadoc.viewer;
 
 import com.lookility.schemadoc.model.*;
 
+import java.util.Optional;
+
 public class TextViewer implements TreeHandler {
 
     private final StringBuilder text = new StringBuilder();
@@ -58,7 +60,7 @@ public class TextViewer implements TreeHandler {
         this.text.append(node.getName());
         this.text.append(" [").append(node.getType().orElse("")).append("]");
 
-        appendLifeCycle(node.getLifeCycle());
+        appendVersion(node.getVersion());
 
         String doc = node.getDocumentation().getText(this.language);
         if (doc.length() > 0) {
@@ -114,16 +116,12 @@ public class TextViewer implements TreeHandler {
         }
     }
 
-    private void appendLifeCycle(LifeCycleMetaData lifecycle) {
-        if (lifecycle == null || lifecycle.isDefault())
+    private void appendVersion(Optional<Version> version) {
+        if (version == null || !version.isPresent())
             return;
 
         this.text.append('{');
-        lifecycle.getSinceVersion().ifPresent(this.text::append);
-        lifecycle.getDeprecated().ifPresent( v -> {
-            this.text.append('-');
-            this.text.append(v);
-        });
+        this.text.append(version.get().toString());
         this.text.append('}');
     }
 

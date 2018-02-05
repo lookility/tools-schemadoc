@@ -15,7 +15,6 @@ public abstract class Node {
     private BaseType baseType = BaseType.anonymous;
     private Optional<String> type = Optional.empty();
     private Documentation documentation;
-    private LifeCycleMetaData lifeCycle = LifeCycleMetaData.DEFAULT_LIFECYCLE;
     private Optional<Version> version = Optional.empty();
 
     protected Node(NName name) {
@@ -54,22 +53,6 @@ public abstract class Node {
     public void setType(String type) {
         if (type == null || type.isEmpty()) this.type = Optional.empty();
         this.type = Optional.of(type);
-    }
-
-    /**
-     * Returns life cycle meta data of the node.
-     * @return life cycle meta data
-     */
-    public LifeCycleMetaData getLifeCycle() {
-        return this.lifeCycle;
-    }
-
-    /**
-     * Set the life cycle meta data of the node.
-     * @param lifeCycle life cycle meta data
-     */
-    public void setLifeCycle(LifeCycleMetaData lifeCycle) {
-        this.lifeCycle = (lifeCycle != null) ? lifeCycle : LifeCycleMetaData.DEFAULT_LIFECYCLE;
     }
 
     /**

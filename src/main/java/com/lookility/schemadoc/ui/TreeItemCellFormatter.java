@@ -24,13 +24,11 @@ public class TreeItemCellFormatter {
     }
 
     public ObservableValue<String> formatVersion(final Node node) {
+        if (!node.getVersion().isPresent()) {
+            return new ReadOnlyStringWrapper("");
+        }
         StringBuilder version = new StringBuilder();
-        node.getLifeCycle().getSinceVersion().ifPresent(version::append);
-        node.getLifeCycle().getDeprecated().ifPresent(v -> {
-            if (version.length() > 0) version.append(' ');
-            version.append("(! ").append(v).append(')');
-        });
-        return new ReadOnlyStringWrapper(version.toString());
+        return new ReadOnlyStringWrapper(node.getVersion().get().toString());
     }
 
     public ObservableValue<String> formatDescription(final Node node, String language) {

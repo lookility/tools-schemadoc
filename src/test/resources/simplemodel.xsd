@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:xsd:simplemodel" xmlns:m="urn:xsd:simplemodel"
-        xmlns:lc="urn:xsd:com.lookility.schemadoc.lifecycle:v1" elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <simpleType name="CodeType" lc:defsince="1.0">
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <simpleType name="CodeType">
         <annotation>
             <documentation>An arbitrary code.</documentation>
         </annotation>
@@ -20,7 +20,7 @@
         </complexType>
     </element>
 
-    <element name="topLevel" type="string" lc:defsince="1.0"/>
+    <element name="topLevel" type="string"/>
 
     <complexType name="BaseType">
         <sequence>
@@ -73,12 +73,12 @@
                     </element>
                     <choice>
                         <element name="c1" type="string" minOccurs="0"/>
-                        <element name="c2" type="m:CodeType" lc:since="1.0"/>
-                        <element ref="m:topLevel" lc:since="1.0"/>
+                        <element name="c2" type="m:CodeType"/>
+                        <element ref="m:topLevel"/>
                     </choice>
                 </sequence>
-                <attribute name="a1" type="m:CodeType" lc:since="1.0"/>
-                <attribute name="a2" type="string" lc:since="1.1.0" lc:deprecated="true"/>
+                <attribute name="a1" type="m:CodeType"/>
+                <attribute name="a2" type="string"/>
                 <attribute name="a3" type="m:CodeType">
                     <annotation>
                         <documentation>Code attribute</documentation>
@@ -88,7 +88,7 @@
         </complexContent>
     </complexType>
 
-    <element name="moreComplexRoot" type="m:SuperType" lc:defsince="1.0"/>
+    <element name="moreComplexRoot" type="m:SuperType"/>
 
     <element name="amount">
         <annotation>

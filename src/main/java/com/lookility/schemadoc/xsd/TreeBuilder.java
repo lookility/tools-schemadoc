@@ -65,15 +65,10 @@ class TreeBuilder {
      * @throws ModelBuilderException if an error occurs on building the tree
      */
     private ContentNode buildContentNode(XmlSchemaElement element) throws ModelBuilderException {
-        LifeCycleMetaData lifeCycle = getLifeCycle(element);
-
         if (element.getRef() != null && element.getRef().getTarget() != null) {
             element = element.getRef().getTarget();
-            lifeCycle = lifeCycle.mix(getLifeCycle(element));
         }
         ContentNode node = new ContentNode(buildName(element.getQName()));
-
-        node.setLifeCycle(lifeCycle);
 
         node.setOccurrence(Occurrence.fromMinMax(element.getMinOccurs(), element.getMaxOccurs()));
 
@@ -284,7 +279,6 @@ class TreeBuilder {
 
                 attributeNode.setType(buildTypeName(attribute.getSchemaTypeName()));
                 attributeNode.setBaseType(determineSimpleBaseType(attribute.getSchemaTypeName()));
-                attributeNode.setLifeCycle(getLifeCycle(attribute));
 
                 try {
                     node.add(attributeNode);
@@ -354,20 +348,6 @@ class TreeBuilder {
             }
         }
         return documentationAdded;
-    }
-
-    private LifeCycleMetaData getLifeCycle(XmlSchemaObject schemaObject) {
-        String sinceVersion = this.lifeCycleExtensionDeserializer.getSince(schemaObject);
-        if (sinceVersion == null) {
-            sinceVersion = this.lifeCycleExtensionDeserializer.getDefSince(schemaObject);
-        }
-
-        String deprecatedVersion = this.lifeCycleExtensionDeserializer.getDeprecated(schemaObject);
-        if (deprecatedVersion == null) {
-            deprecatedVersion = this.lifeCycleExtensionDeserializer.getDefDeprecated(schemaObject);
-        }
-
-        return LifeCycleMetaData.build(sinceVersion, deprecatedVersion);
     }
 
     private String renderMarkup(NodeList nl) {
