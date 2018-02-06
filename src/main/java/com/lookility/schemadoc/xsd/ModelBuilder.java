@@ -26,7 +26,6 @@ public class ModelBuilder {
     private XmlSchemaCollection collection = null;
     private XmlSchema schema = null;
 
-    private final LifeCycleExtensionDeserializer lifeCycleExtensionDeserializer;
     private final ExtensionRegistry extensionRegistry = new ExtensionRegistry();
 
     /**
@@ -40,9 +39,6 @@ public class ModelBuilder {
      */
     public ModelBuilder(File xsdFile, String lifecycleExtensionURI) throws IOException {
         this.xsdFile = xsdFile;
-
-        this.lifeCycleExtensionDeserializer = new LifeCycleExtensionDeserializer(lifecycleExtensionURI);
-        this.lifeCycleExtensionDeserializer.register(this.extensionRegistry);
 
         loadSchema();
     }
@@ -59,7 +55,7 @@ public class ModelBuilder {
      * @return tree model for specified root element
      */
     public Tree buildTree(QName rootQName, ErrorHandler errorHandler) throws ModelBuilderException {
-        TreeBuilder treeBuilder = new TreeBuilder(this.collection, rootQName, this.lifeCycleExtensionDeserializer, errorHandler);
+        TreeBuilder treeBuilder = new TreeBuilder(this.collection, rootQName, errorHandler);
         return treeBuilder.getTree();
     }
 

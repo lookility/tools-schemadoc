@@ -17,7 +17,6 @@ class TreeBuilder {
     private final XmlSchemaCollection collection;
     private final Tree tree;
     private final ErrorHandler errorHandler;
-    private final LifeCycleExtensionDeserializer lifeCycleExtensionDeserializer;
 
     /**
      * Constructs a tree model for the specified root element.
@@ -29,14 +28,11 @@ class TreeBuilder {
      * @throws UnsupportedFeatureException if error handler is not specified and XML Schema has unsupported features
      * @see #getTree()
      */
-    TreeBuilder(XmlSchemaCollection collection, QName rootElementName, LifeCycleExtensionDeserializer lifeCycleExtensionDeserializer, ErrorHandler errorHandler) throws ModelBuilderException {
+    TreeBuilder(XmlSchemaCollection collection, QName rootElementName, ErrorHandler errorHandler) throws ModelBuilderException {
         if (collection == null) throw new IllegalArgumentException("collection must not be null");
         if (rootElementName == null) throw new IllegalArgumentException("root element must not be null");
-        if (lifeCycleExtensionDeserializer == null)
-            throw new IllegalArgumentException("extension deserializer must not be null");
 
         this.rootElementName = rootElementName;
-        this.lifeCycleExtensionDeserializer = lifeCycleExtensionDeserializer;
         this.errorHandler = errorHandler;
         this.collection = collection;
 
