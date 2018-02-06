@@ -39,7 +39,7 @@ public class VersionScanner implements TreeHandler {
     }
 
     private void determineMaxVersion(Node node) {
-        node.getVersion().ifPresent((version) -> {
+        node.getAnnotation().getVersion().ifPresent((version) -> {
             if (this.maxVersion == null) {
                 this.maxVersion = version;
             } else {

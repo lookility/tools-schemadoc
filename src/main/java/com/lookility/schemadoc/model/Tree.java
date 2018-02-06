@@ -59,6 +59,14 @@ public class Tree extends NamespaceSet {
         return ls.getAvailableLanguages();
     }
 
+    public Set<String> getAvailableProfiles() {
+        ProfileScanner ps = new ProfileScanner();
+        TreeWalker tw = new TreeWalker(ps);
+        tw.walk(this);
+
+        return ps.getProfileNames();
+    }
+
     public Optional<Version> getMaxVersion() {
         VersionScanner vs = new VersionScanner();
         TreeWalker tw = new TreeWalker(vs);

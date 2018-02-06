@@ -37,9 +37,9 @@ public class VersionSetter implements TreeHandler {
     }
 
     private void setVersionIfNotSpecified(Node node) {
-        Optional<Version> nodeVersion = node.getVersion();
+        Optional<Version> nodeVersion = node.getAnnotation().getVersion();
         if (!nodeVersion.isPresent()) {
-            node.setVersion(this.version);
+            node.getAnnotation().setVersion(this.version);
         }
     }
 }

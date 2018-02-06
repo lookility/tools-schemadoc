@@ -24,11 +24,10 @@ public class TreeItemCellFormatter {
     }
 
     public ObservableValue<String> formatVersion(final Node node) {
-        if (!node.getVersion().isPresent()) {
+        if (!node.getAnnotation().getVersion().isPresent()) {
             return new ReadOnlyStringWrapper("");
         }
-        StringBuilder version = new StringBuilder();
-        return new ReadOnlyStringWrapper(node.getVersion().get().toString());
+        return new ReadOnlyStringWrapper(node.getAnnotation().getVersion().get().toString());
     }
 
     public ObservableValue<String> formatDescription(final Node node, String language) {

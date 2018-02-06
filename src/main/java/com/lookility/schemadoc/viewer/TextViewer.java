@@ -60,7 +60,7 @@ public class TextViewer implements TreeHandler {
         this.text.append(node.getName());
         this.text.append(" [").append(node.getType().orElse("")).append("]");
 
-        appendVersion(node.getVersion());
+        appendVersion(node.getAnnotation().getVersion());
 
         String doc = node.getDocumentation().getText(this.language);
         if (doc.length() > 0) {

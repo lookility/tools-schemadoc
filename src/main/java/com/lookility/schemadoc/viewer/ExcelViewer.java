@@ -127,7 +127,11 @@ public class ExcelViewer implements TreeHandler {
         cell.setCellStyle(cs);
 
         cell = row.createCell(2);
-        cell.setCellValue(node.getVersion().isPresent() ? node.getVersion().toString() : "");
+        if (node.getAnnotation().getVersion().isPresent()) {
+            cell.setCellValue(node.getAnnotation().getVersion().get().toString());
+        } else {
+            cell.setCellValue("");
+        }
         cell.setCellStyle(cs);
 
         cell = row.createCell(3);

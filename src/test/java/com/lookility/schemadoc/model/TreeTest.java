@@ -9,15 +9,15 @@ public class TreeTest {
 
     private Tree buildTree() throws Exception {
         ContentNode root = new ContentNode(new NName(null, "root"));
-        root.setVersion(new Version(0,1,0));
+        root.getAnnotation().setVersion(new Version(0,1,0));
 
         ContentNode child1 = new ContentNode(new NName(null, "child1"));
-        child1.setVersion(new Version(0,2,0));
+        child1.getAnnotation().setVersion(new Version(0,2,0));
 
         ContentNode child2 = new ContentNode(new NName(null, "child2"));
 
         AttributeNode attrib1 = new AttributeNode(new NName(null, "a1"));
-        attrib1.setVersion(new Version(0,2,0 ));
+        attrib1.getAnnotation().setVersion(new Version(0,2,0 ));
 
         AttributeNode attrib2 = new AttributeNode(new NName(null, "a2"));
 
@@ -55,19 +55,19 @@ public class TreeTest {
     }
 
     @Test
-    public void applyVersiomn() throws Exception {
+    public void applyVersion() throws Exception {
         Tree tree = buildTree();
         ContentNode child2 = tree.getRoot().getChild(new NName(null, "child2")).get();
         AttributeNode attrib2 = child2.getAttribute(new NName(null, "a2")).get();
 
         Version version = new Version(1);
 
-        assertFalse(child2.getVersion().isPresent());
-        assertFalse(attrib2.getVersion().isPresent());
+        assertFalse(child2.getAnnotation().getVersion().isPresent());
+        assertFalse(attrib2.getAnnotation().getVersion().isPresent());
 
         tree.applyVersion(version);
 
-        assertEquals(version, child2.getVersion().get());
-        assertEquals(version, attrib2.getVersion().get());
+        assertEquals(version, child2.getAnnotation().getVersion().get());
+        assertEquals(version, attrib2.getAnnotation().getVersion().get());
     }
 }

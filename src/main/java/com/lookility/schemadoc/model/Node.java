@@ -1,7 +1,6 @@
 package com.lookility.schemadoc.model;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 /**
@@ -15,27 +14,28 @@ public abstract class Node {
     private BaseType baseType = BaseType.anonymous;
     private Optional<String> type = Optional.empty();
     private Documentation documentation;
-    private Optional<Version> version = Optional.empty();
+    private NodeAnnotation annotation = new NodeAnnotation();
+
 
     protected Node(NName name) {
         if (name == null) throw new IllegalArgumentException("node name must not be null");
         this.name = name;
     }
 
-    public void setVersion(Version version) {
-        if (version == null) {
-            this.version = Optional.empty();
-        } else {
-            this.version = Optional.of(version);
-        }
-    }
-
-    public Optional<Version> getVersion() {
-        return this.version;
-    }
-
     public NName getName() {
         return this.name;
+    }
+
+    public NodeAnnotation getAnnotation() {
+        return this.annotation;
+    }
+
+    public void setAnnotation(NodeAnnotation annotation) {
+        if (annotation == null) {
+            this.annotation = new NodeAnnotation();
+        } else {
+            this.annotation = annotation;
+        }
     }
 
     public BaseType getBaseType() {
