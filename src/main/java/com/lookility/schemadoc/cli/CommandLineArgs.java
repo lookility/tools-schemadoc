@@ -13,7 +13,4 @@ class CommandLineArgs {
 
     @Parameter(names = "--log-level", description = "Log level (TRACE, DEBUG, INFO, WARN, ERROR, FATAL)")
     Level level = Level.ERROR;
-
-    @Parameter(names = "--lifecycle-namespace", description = "Namespace URI of life cycle extensions for XML Schema.")
-    String lifeCycleNamespaceURI = null;
 }

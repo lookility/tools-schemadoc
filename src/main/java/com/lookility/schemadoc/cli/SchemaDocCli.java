@@ -90,7 +90,7 @@ public class SchemaDocCli {
     }
 
     private void buildText(CommandLineArgs cla, CommandText ct) throws Exception {
-        ModelBuilder mb = createModelBuilder(ct.schemaFile, cla.lifeCycleNamespaceURI);
+        ModelBuilder mb = createModelBuilder(ct.schemaFile);
 
         TreeContainer tc = mb.buildAll(null);
 
@@ -101,16 +101,16 @@ public class SchemaDocCli {
     }
 
     private void buildExcel(CommandLineArgs cla, CommandExcel ce) throws Exception {
-        ModelBuilder mb = createModelBuilder(ce.schemaFile, cla.lifeCycleNamespaceURI);
+        ModelBuilder mb = createModelBuilder(ce.schemaFile);
 
         ExcelViewer excel = new ExcelViewer();
         excel.write(new File(ce.file), mb.buildAll(null), cla.language);
 
     }
 
-    private ModelBuilder createModelBuilder(String schemaFile, String lifeCycleNamespaceURI) throws IOException {
+    private ModelBuilder createModelBuilder(String schemaFile) throws IOException {
         File xmlSchema = new File(schemaFile);
-        return new ModelBuilder(xmlSchema, lifeCycleNamespaceURI);
+        return new ModelBuilder(xmlSchema);
     }
 
     private Tree buildTreeFromXmlSchema(ModelBuilder mb, String namespaceURI, String rootElementName) throws IOException, ModelBuilderException {

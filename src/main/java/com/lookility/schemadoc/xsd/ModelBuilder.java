@@ -26,18 +26,15 @@ public class ModelBuilder {
     private XmlSchemaCollection collection = null;
     private XmlSchema schema = null;
 
-    private final ExtensionRegistry extensionRegistry = new ExtensionRegistry();
-
     /**
      * Creates a tree model builder for a XML Schema.
      * <p>
      * The given XML Schema will be loaded.</p>
      *
      * @param xsdFile XML Schema file
-     * @param lifecycleExtensionURI custom namespace URI for life cycle extensions or <i>null</i>
      * @throws IOException if error occurred on loading XML Schema
      */
-    public ModelBuilder(File xsdFile, String lifecycleExtensionURI) throws IOException {
+    public ModelBuilder(File xsdFile) throws IOException {
         this.xsdFile = xsdFile;
 
         loadSchema();
@@ -87,7 +84,6 @@ public class ModelBuilder {
         LOGGER.debug("loading XML Schema file: " + this.xsdFile);
 
         this.collection = new XmlSchemaCollection();
-        this.collection.setExtReg(this.extensionRegistry);
         this.collection.setBaseUri(this.xsdFile.getParentFile().toURI().toString());
         this.schema = this.collection.read(new StreamSource(new FileInputStream(this.xsdFile)));
 

@@ -15,7 +15,7 @@ public class SchemaDocModel {
 
     public void openFile(File file) throws IOException, ModelBuilderException {
         close();
-        this.currentSchema = new ModelBuilder(file, null);
+        this.currentSchema = new ModelBuilder(file);
         this.treeContainer = this.currentSchema.buildAll(null);
     }
 
