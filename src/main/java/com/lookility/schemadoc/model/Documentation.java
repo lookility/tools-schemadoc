@@ -51,7 +51,7 @@ public class Documentation {
      * <p>The documentation for the specified language is returned. If not exists, the documentation of the default language is returned. If no documentation is available an empty string is returned.</p>
      *
      * @param language language identifier (e.g. "de") or <i>null</i> if language is not specified.
-     * @return documentation
+     * @return documentation or empty string if no documentation exists
      */
     public String getText(String language) {
         if (language == null) language = DEFAULT_LANGUAGE;
