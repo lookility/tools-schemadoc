@@ -1,18 +1,23 @@
 package com.lookility.schemadoc.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class ProfileScanner implements TreeHandler {
 
-    private final Set<String> profileNames = new HashSet<>();
+    private final SortedSet<String> profileNames = new TreeSet<>();
 
-    public Set<String> getProfileNames() {
+    @NotNull
+    public SortedSet<String> getProfileNames() {
         return this.profileNames;
     }
 
     @Override
-    public void onTreeBegin(String name) {
+    public void onTreeBegin(Tree tree) {
         this.profileNames.clear();
     }
 

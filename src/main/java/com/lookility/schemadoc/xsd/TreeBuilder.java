@@ -95,7 +95,7 @@ class TreeBuilder {
      * @return node name
      */
     private NName buildName(QName qname) {
-        Namespace ns = this.tree.registerNamespace(qname.getNamespaceURI());
+        Namespace ns = new Namespace(qname.getNamespaceURI());
         return new NName(ns, qname.getLocalPart());
     }
 

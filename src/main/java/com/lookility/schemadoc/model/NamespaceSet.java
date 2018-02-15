@@ -3,6 +3,7 @@ package com.lookility.schemadoc.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -13,36 +14,16 @@ import java.util.*;
  */
 public class NamespaceSet {
 
-    private static final String EMPTY_PREFIX = "";
+    /**
+     * Empty namespace prefix.
+     */
+    public static final String EMPTY_PREFIX = "";
 
     private int nextPrefixIndex = 1;
 
     private final SortedMap<Namespace, String> namespaces = new TreeMap<Namespace, String>();
 
     NamespaceSet() {
-    }
-
-    /**
-     * Register a new namespace.
-     * <p>
-     * <p>If the namespace is already registered the exiting namespace is returned. The prefix for the newly registered namespace will be generated automatically and will be unique within this namespace set.</p>
-     *
-     * @param namespaceURI URI of namespace
-     * @return registered namespace
-     */
-    public Namespace registerNamespace(String namespaceURI) {
-        if (namespaceURI == null || namespaceURI.isEmpty()) return new Namespace();
-
-        Namespace ns = getNamespaceByURI(namespaceURI);
-
-        if (ns == null) {
-            String prefix = namespaceURI.isEmpty() ? "" : generatePrefix();
-            ns = new Namespace(namespaceURI);
-
-            this.namespaces.put(ns, prefix);
-        }
-
-        return ns;
     }
 
     /**
@@ -79,7 +60,18 @@ public class NamespaceSet {
     }
 
 
-    public String getPrefix(String uri) {
+    /**
+     * Returns the prefix of a given namespace URI.
+     *
+     * <p>If the URI is unknown the new URI will be added to the namespace set.</p>
+     *
+     * @param uri namespace URI to get the prefix for
+     * @return prefix or {@link #EMPTY_PREFIX} if URI is null or empty
+     *
+     * @see #getPrefix(Namespace)
+     */
+    @NotNull
+    public String getPrefix(@Nullable String uri) {
         if (uri == null || uri.isEmpty()) return EMPTY_PREFIX;
 
         return getPrefix(new Namespace(uri));
@@ -88,11 +80,13 @@ public class NamespaceSet {
     /**
      * Returns the prefix of given namespace.
      *
-     * @param namespace
-     * @return
+     * <p>If the namespace is unknown the new namespace will be added to the namespace set.</p>
+     *
+     * @param namespace namespace to get the prefix for
+     * @return prefix or {@link #EMPTY_PREFIX} if namespace is null
      */
     @NotNull
-    public String getPrefix(Namespace namespace) {
+    public String getPrefix(@Nullable Namespace namespace) {
         if (namespace == null) return EMPTY_PREFIX;
 
         String prefix = this.namespaces.get(namespace);
@@ -136,10 +130,20 @@ public class NamespaceSet {
         return null;
     }
 
+    /**
+     * Returns the next index to generate prefix.
+     * @return next index
+     */
     public int getNextPrefixIndex() {
         return this.nextPrefixIndex;
     }
 
+    /**
+     * Returns registered namespaces and according prefixes.
+     *
+     * @return map of namespaces and according prefix
+     */
+    @NotNull
     public SortedMap<Namespace, String> getNamespaces() {
         return this.namespaces;
     }

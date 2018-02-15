@@ -13,14 +13,12 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class SchemaDocController {
 
     private static final String FIXED_COLUMN_PREFIX = "_";
     private static final String HIDABLE_COLUMN_PREFIX = "#";
-
-    private static final PathFormatter PATH_FORMATTER = new PathFormatter(PathFormatter.NamespaceRepresentation.prefixOnly, null);
-    private static final TreeItemCellFormatter CELL_FORMATTER = new TreeItemCellFormatter(PATH_FORMATTER);
 
     private static final String LANG_PREFIX = "menuLanguage#";
 
@@ -64,19 +62,14 @@ public class SchemaDocController {
         this.tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
             @Override
             public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
-                TreeTableView<Node> ttv = null;
-                if (newValue != null) {
-                    ttv = (TreeTableView) newValue.getContent();
+                SchemaTreeTableView sttv = null;
 
-                    TreeItem<Node> selectedItem = ttv.getSelectionModel().getSelectedItem();
-                    if (selectedItem != null) {
-                        textField.setText(PATH_FORMATTER.formatPath(selectedItem.getValue()));
-                    } else {
-                        textField.setText(null);
-                    }
+                if (newValue != null) {
+                    sttv = (SchemaTreeTableView) newValue.getContent();
+                    textField.setText(sttv.getSelectedItemPath().orElse(null));
                 }
 
-                buildColumnsMenu(ttv);
+                buildColumnsMenu(sttv);
             }
         });
     }
@@ -226,62 +219,25 @@ public class SchemaDocController {
     }
 
     private Tab buildTab(Tree tree, String language) {
+        final PathFormatter PATH_FORMATTER = new PathFormatter(PathFormatter.NamespaceRepresentation.prefixOnly, tree);
+        final TreeItemCellFormatter CELL_FORMATTER = new TreeItemCellFormatter(PATH_FORMATTER);
+
         Tab tab = new Tab();
         tab.setText(tree.getName());
 
-        TreeItem<Node> root = buildTree(tree, language);
-
-        TreeTableColumn<Node, String> colName = new TreeTableColumn<Node, String>("Name");
-        colName.setCellValueFactory((TreeTableColumn.CellDataFeatures<Node, String> param) -> CELL_FORMATTER.formatName(param.getValue().getValue()));
-        colName.setSortable(false);
-        colName.setId(FIXED_COLUMN_PREFIX + "_name");
-
-        TreeTableColumn<Node, String> colOccurrence = new TreeTableColumn<Node, String>("Occurrence");
-        colOccurrence.setCellValueFactory((TreeTableColumn.CellDataFeatures<Node, String> param) -> CELL_FORMATTER.formatOccurrence(param.getValue().getValue()));
-        colOccurrence.setSortable(false);
-        colOccurrence.setMinWidth(30);
-        colOccurrence.setMaxWidth(30);
-        colOccurrence.setStyle("-fx-alignment: center");
-        colOccurrence.setId(FIXED_COLUMN_PREFIX + "_occur");
-
-        TreeTableColumn<Node, String> colBaseType = new TreeTableColumn("Base Type");
-        colBaseType.setCellValueFactory((TreeTableColumn.CellDataFeatures<Node, String> param) -> CELL_FORMATTER.formatBaseType(param.getValue().getValue()));
-        colBaseType.setSortable(false);
-        colBaseType.setId(FIXED_COLUMN_PREFIX + "_baseType");
-
-        TreeTableColumn<Node, String> colType = new TreeTableColumn("Type");
-        colType.setCellValueFactory((TreeTableColumn.CellDataFeatures<Node, String> param) -> CELL_FORMATTER.formatType(param.getValue().getValue()));
-        colType.setSortable(false);
-        colType.setId(HIDABLE_COLUMN_PREFIX + "_type");
-
-        TreeTableColumn<Node, String> colVer = new TreeTableColumn("Version");
-        colVer.setCellValueFactory((TreeTableColumn.CellDataFeatures<Node, String> param) -> CELL_FORMATTER.formatVersion(param.getValue().getValue()));
-        colVer.setSortable(false);
-        colVer.setMinWidth(50);
-        colVer.setMaxWidth(100);
-        colVer.setId(HIDABLE_COLUMN_PREFIX + "_version");
-
-        TreeTableColumn<Node, String> colDesc = new TreeTableColumn("Description");
-        colDesc.setCellValueFactory((TreeTableColumn.CellDataFeatures<Node, String> param) -> CELL_FORMATTER.formatDescription(param.getValue().getValue(), language));
-        colDesc.setSortable(false);
-        colDesc.setId(HIDABLE_COLUMN_PREFIX + "_descr");
-
-        TreeTableView<Node> ttv = new TreeTableView<>(root);
-        ttv.getColumns().addAll(colName, colOccurrence, colBaseType, colType, colVer, colDesc);
-        ttv.getRoot().setExpanded(true);
-        ttv.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
-        ttv.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<Node>>() {
+        SchemaTreeTableView sttv = new SchemaTreeTableView(tree, language);
+        sttv.addListener(new SelectedPathChangedListener() {
             @Override
-            public void changed(ObservableValue<? extends TreeItem<Node>> observable, TreeItem<Node> oldValue, TreeItem<Node> newValue) {
-                if (newValue != null) {
-                    textField.setText(PATH_FORMATTER.formatPath(newValue.getValue()));
+            public void changed(Optional<String> path) {
+                if (path.isPresent()) {
+                    textField.setText(path.get());
                 } else {
                     textField.setText(null);
                 }
             }
         });
 
-        tab.setContent(ttv);
+        tab.setContent(sttv);
         return tab;
     }
 

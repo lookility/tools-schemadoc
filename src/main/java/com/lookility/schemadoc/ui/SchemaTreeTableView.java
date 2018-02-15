@@ -4,30 +4,53 @@ import com.lookility.schemadoc.model.Node;
 import com.lookility.schemadoc.model.PathFormatter;
 import com.lookility.schemadoc.model.Tree;
 import com.lookility.schemadoc.model.TreeWalker;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class SchemaTreeTableView extends TreeTableView<Node> {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+public class SchemaTreeTableView extends TreeTableView<Node> implements ChangeListener<TreeItem<Node>> {
 
     private static final String FIXED_COLUMN_PREFIX = "_";
     private static final String HIDABLE_COLUMN_PREFIX = "#";
 
     private final Tree tree;
-    private String language;
     private final PathFormatter pathFormatter;
     private final TreeItemCellFormatter cellFormatter;
 
+    private final List<SelectedPathChangedListener> listeners = new ArrayList<>();
 
-    public SchemaTreeTableView(Tree tree, String language) {
+    /**
+     * Currently selected language for descriptions.
+     */
+    private String language;
+
+
+    /**
+     * Create a schema tree table view.
+     *
+     * <p>The schema tree table view displays a hierarchical tree model.</p>
+     * @param tree tree to be displayed
+     * @param language documentation language or <i>null</i> if default language should be used
+     */
+    public SchemaTreeTableView(@NotNull Tree tree, @Nullable String language) {
         if (tree == null) throw new IllegalArgumentException("tree must not be null");
         this.language = language;
         this.tree = tree;
         this.pathFormatter = new PathFormatter(PathFormatter.NamespaceRepresentation.prefixOnly, this.tree);
         this.cellFormatter = new TreeItemCellFormatter(this.pathFormatter);
 
-
         buildTreeTableView();
+
+        getSelectionModel().selectedItemProperty().addListener(this);
     }
 
     private final void buildTreeTableView() {
@@ -70,6 +93,38 @@ public class SchemaTreeTableView extends TreeTableView<Node> {
         getColumns().addAll(colName, colOccurrence, colBaseType, colType, colVer, colDesc);
         getRoot().setExpanded(true);
         setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
+    }
+
+    /**
+     * Return the path of the currently selected item.
+     * @return path of selected item or {@link Optional#empty()} if no item selected
+     */
+    public Optional<String> getSelectedItemPath() {
+        String path = null;
+        TreeItem<Node> selectedItem = getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            path = this.pathFormatter.formatPath(selectedItem.getValue());
+        }
+
+        return Optional.ofNullable(path);
+    }
+
+    public void addListener(@NotNull final SelectedPathChangedListener listener) {
+        this.listeners.add(Objects.requireNonNull(listener));
+    }
+
+    @Override
+    public void changed(ObservableValue<? extends TreeItem<Node>> observable, TreeItem<Node> oldValue, TreeItem<Node> newValue) {
+        if (!this.listeners.isEmpty()) {
+            Optional<String> optionalPath = Optional.empty();
+            if (newValue != null) {
+                optionalPath = Optional.of(this.pathFormatter.formatPath(newValue.getValue()));
+            }
+
+            for(SelectedPathChangedListener listener : this.listeners) {
+                listener.changed(optionalPath);
+            }
+        }
     }
 
     private final TreeItem<Node> buildTree() {
