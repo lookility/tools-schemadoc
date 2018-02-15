@@ -1,23 +1,20 @@
 package com.lookility.schemadoc.model;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Tree handler to scan for languages used in the documentation.
  */
 class LanguageScanner implements TreeHandler {
 
-    private final Set<String> availableLanguages = new HashSet<>();
+    private final SortedSet<String> availableLanguages = new TreeSet<>();
 
-    public Set<String> getAvailableLanguages() {
+    public SortedSet<String> getAvailableLanguages() {
         return this.availableLanguages;
     }
 
     @Override
-    public void onTreeBegin(String name) {
+    public void onTreeBegin(Tree tree) {
         this.availableLanguages.clear();
 
     }
