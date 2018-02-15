@@ -1,5 +1,7 @@
 package com.lookility.schemadoc.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +55,7 @@ public class Documentation {
      * @param language language identifier (e.g. "de") or <i>null</i> if language is not specified.
      * @return documentation or empty string if no documentation exists
      */
+    @JsonIgnore
     public String getText(String language) {
         if (language == null) language = DEFAULT_LANGUAGE;
         StringBuilder doc = this.languages.get(language);
@@ -73,6 +76,7 @@ public class Documentation {
      * @param lang language to be checked
      * @return <i>true</i> if given language is the default language, <i>false</i> otherwise
      */
+    @JsonIgnore
     public boolean isDefaultLanguage(String lang) {
         return lang == null || DEFAULT_LANGUAGE.equals(lang);
     }
@@ -83,6 +87,7 @@ public class Documentation {
      * @return set of languages
      * @see #isDefaultLanguage(String)
      */
+    @JsonIgnore
     public Set<String> getAvailableLanguages() {
         return this.languages.keySet();
     }

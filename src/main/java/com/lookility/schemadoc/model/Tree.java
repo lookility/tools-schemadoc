@@ -1,7 +1,15 @@
 package com.lookility.schemadoc.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * Tree representing a hierarchical data model.
@@ -17,15 +25,17 @@ public class Tree extends NamespaceSet {
      *
      * @param name name of the tree
      */
-    public Tree(String name) {
+    @JsonCreator
+    public Tree(@JsonProperty("name") @NotNull String name) {
         super();
-        this.name = name;
+        this.name = Objects.requireNonNull(name,"name must not be null");
     }
 
     /**
      * Returns the name of the tree.
      * @return name of tree
      */
+    @NotNull
     public String getName() {
         return this.name;
     }
@@ -34,6 +44,7 @@ public class Tree extends NamespaceSet {
      * Returns the root node of the tree.
      * @return root node
      */
+    @Nullable
     public ContentNode getRoot() {
         return this.root;
     }
@@ -42,16 +53,18 @@ public class Tree extends NamespaceSet {
     /**
      * Set the root node of the tree.
      *
-     * @param root root node
+     * @param root root node or <i>null</i> to remove the root node
      */
-    public void setRoot(ContentNode root) {
+    public void setRoot(@Nullable ContentNode root) {
         if (root != null) {
             if (!root.isRoot()) throw new IllegalStateException("root node must not have a parent");
         }
         this.root = root;
     }
 
-    public Set<String> getAvailableLanguages() {
+    @JsonIgnore
+    @NotNull
+    public SortedSet<String> getAvailableLanguages() {
         LanguageScanner ls = new LanguageScanner();
         TreeWalker tw = new TreeWalker(ls);
 
@@ -59,7 +72,9 @@ public class Tree extends NamespaceSet {
         return ls.getAvailableLanguages();
     }
 
-    public Set<String> getAvailableProfiles() {
+    @JsonIgnore
+    @NotNull
+    public SortedSet<String> getAvailableProfiles() {
         ProfileScanner ps = new ProfileScanner();
         TreeWalker tw = new TreeWalker(ps);
         tw.walk(this);
@@ -67,6 +82,12 @@ public class Tree extends NamespaceSet {
         return ps.getProfileNames();
     }
 
+    /**
+     * Returns the highest version assigned to node of tree.
+     *
+     * @return highest version or {@link Optional#empty()} if no version assigned
+     */
+    @JsonIgnore
     public Optional<Version> getMaxVersion() {
         VersionScanner vs = new VersionScanner();
         TreeWalker tw = new TreeWalker(vs);
@@ -74,7 +95,12 @@ public class Tree extends NamespaceSet {
         return vs.getMaxVersion();
     }
 
-    public void applyVersion(Version version) {
+    /**
+     * Apply the give version to all nodes of tree which have no assigned version.
+     *
+     * @param version version to be assigned to non-versioned nodes
+     */
+    public void applyVersion(@NotNull Version version) {
         if (version == null) throw new IllegalArgumentException("version must not be null");
         Optional<Version> maxVersion = getMaxVersion();
         if (maxVersion.isPresent()) {

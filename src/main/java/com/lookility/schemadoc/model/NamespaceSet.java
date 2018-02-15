@@ -1,7 +1,10 @@
 package com.lookility.schemadoc.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 
 /**
  * Set of registered namespaces.
@@ -9,22 +12,14 @@ import java.util.Map;
  * @see Namespace
  */
 public class NamespaceSet {
-    private static final String GROUP_URI = "urn:xsd:com.lookility.schemadoc.group:v1";
-    private static final String GROUP_PREFIX = "group";
 
-    private int genericPrefixCount = 1;
+    private static final String EMPTY_PREFIX = "";
 
-    private Map<String, Namespace> namespacesByPrefix = new HashMap<>();
-    private Map<String, Namespace> namespacesByURI = new HashMap<>();
+    private int nextPrefixIndex = 1;
 
-    private final Namespace groupNamespace;
+    private final SortedMap<Namespace, String> namespaces = new TreeMap<Namespace, String>();
 
     NamespaceSet() {
-        this.groupNamespace = registerNamespace(GROUP_URI, GROUP_PREFIX);
-    }
-
-    public Namespace getGroupNamespace() {
-        return this.groupNamespace;
     }
 
     /**
@@ -36,15 +31,15 @@ public class NamespaceSet {
      * @return registered namespace
      */
     public Namespace registerNamespace(String namespaceURI) {
-        if (namespaceURI == null) namespaceURI = "";
+        if (namespaceURI == null || namespaceURI.isEmpty()) return new Namespace();
 
-        Namespace ns = this.namespacesByURI.get(namespaceURI);
+        Namespace ns = getNamespaceByURI(namespaceURI);
+
         if (ns == null) {
             String prefix = namespaceURI.isEmpty() ? "" : generatePrefix();
-            ns = Namespace.create(namespaceURI, prefix);
+            ns = new Namespace(namespaceURI);
 
-            this.namespacesByURI.put(ns.getURI(), ns);
-            this.namespacesByPrefix.put(ns.getPrefix(), ns);
+            this.namespaces.put(ns, prefix);
         }
 
         return ns;
@@ -64,21 +59,49 @@ public class NamespaceSet {
     public Namespace registerNamespace(String namespaceURI, String prefix) {
         if (namespaceURI == null) namespaceURI = "";
         if (prefix == null) prefix = "";
-        Namespace ns = this.namespacesByURI.get(namespaceURI);
+
+        Namespace ns = getNamespaceByURI(namespaceURI);
+
         if (ns != null) {
-            if (!prefix.equals(ns.getPrefix())) {
-                throw new IllegalArgumentException("prefix '" + prefix + "' differs from existing prefix '" + ns.getPrefix() + "' for namespace '" + ns.getURI() + "'");
+            if (!prefix.equals(getPrefix(ns))) {
+                throw new IllegalArgumentException("prefix '" + prefix + "' differs from existing prefix '" + getPrefix(ns) + "' for namespace '" + ns.getURI() + "'");
             }
         } else {
-            ns = this.namespacesByPrefix.get(prefix);
+            ns = getNamespaceByPrefix(prefix);
             if (ns != null) {
                 throw new IllegalArgumentException("prefix '" + prefix + "' already defined for namespace '" + ns.getURI() + "', it can't be used for namespace '" + namespaceURI + "'");
             }
-            ns = Namespace.create(namespaceURI, prefix);
-            this.namespacesByURI.put(ns.getURI(), ns);
-            this.namespacesByPrefix.put(ns.getPrefix(), ns);
+            ns = new Namespace(namespaceURI);
+
+            this.namespaces.put(ns, prefix);
         }
         return ns;
+    }
+
+
+    public String getPrefix(String uri) {
+        if (uri == null || uri.isEmpty()) return EMPTY_PREFIX;
+
+        return getPrefix(new Namespace(uri));
+    }
+
+    /**
+     * Returns the prefix of given namespace.
+     *
+     * @param namespace
+     * @return
+     */
+    @NotNull
+    public String getPrefix(Namespace namespace) {
+        if (namespace == null) return EMPTY_PREFIX;
+
+        String prefix = this.namespaces.get(namespace);
+        if (prefix == null) {
+            prefix = generatePrefix();
+            this.namespaces.put(namespace, prefix);
+        }
+
+        return prefix;
     }
 
     /**
@@ -87,8 +110,38 @@ public class NamespaceSet {
      * @param namespaceURI URI of namespace
      * @return namespace or <i>null</i> if namespace doesn't exists
      */
-    public Namespace getNamespaceByURI(String namespaceURI) {
-        return this.namespacesByURI.get(namespaceURI);
+    @JsonIgnore
+    private Namespace getNamespaceByURI(String namespaceURI) {
+        for(Map.Entry<Namespace, String> entry : this.namespaces.entrySet()) {
+            if (entry.getKey().getURI().equals(namespaceURI)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a namespace by a given prefix.
+     *
+     * @param prefix prefix of namespace
+     * @return namespace or <i>null</i> if namespace doesn't exists
+     */
+    @JsonIgnore
+    private Namespace getNamespaceByPrefix(String prefix) {
+        for(Map.Entry<Namespace, String> entry : this.namespaces.entrySet()) {
+            if (entry.getValue().equals(prefix)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public int getNextPrefixIndex() {
+        return this.nextPrefixIndex;
+    }
+
+    public SortedMap<Namespace, String> getNamespaces() {
+        return this.namespaces;
     }
 
     /**
@@ -97,6 +150,6 @@ public class NamespaceSet {
      * @return generated prefix
      */
     private String generatePrefix() {
-        return "ns" + this.genericPrefixCount++;
+        return "ns" + this.nextPrefixIndex++;
     }
 }

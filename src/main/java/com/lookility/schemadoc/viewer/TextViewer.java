@@ -23,7 +23,7 @@ public class TextViewer implements TreeHandler {
     }
 
     @Override
-    public void onTreeBegin(String name) {
+    public void onTreeBegin(Tree tree) {
     }
 
 

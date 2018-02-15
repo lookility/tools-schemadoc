@@ -1,60 +1,41 @@
 package com.lookility.schemadoc.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+
 /**
  * Namespace of a node name.
  *
  * @see NName
  */
-public class Namespace {
+public class Namespace implements Comparable<Namespace>{
 
-    /**
-     * Constant representing an empty namespace.
-     */
-    public static final Namespace NO_NAMESPACE = new Namespace();
+    private static final String EMPTY_URI = "";
+    private static final HashMap<String, String> cachedURIs = new HashMap<>();
 
     private final String uri;
-    private final String prefix;
 
-    /**
-     * Creates a new namespace.
-     *
-     * @param uri URI identifying the namespace, or <i>null</i> or <i>empty</i> to indicate a not defined  namespace
-     * @param prefix prefix used as an abbreviation for the namespace, or <i>null</i> or <i>empty</i> if no namespace is defined
-     * @return created namespace or {@link #NO_NAMESPACE} if namespace is not defined
-     *
-     * @throws IllegalArgumentException if prefix is defined for an empty namespace
-     * @throws IllegalArgumentException if prefix is empty for non empty namespace
-     */
-    public static Namespace create(String uri, String prefix) {
-        if (uri == null || uri.isEmpty()) {
-            if (prefix != null && !prefix.isEmpty())
-                throw new IllegalArgumentException("prefix must not be specified for empty namespaces");
-            return NO_NAMESPACE;
-        }
-        if (prefix == null || prefix.isEmpty()) {
-            throw new IllegalArgumentException("prefix must not be empty");
-        }
-        return new Namespace(uri, prefix);
-    }
-
-    private Namespace() {
-        this.uri = "";
-        this.prefix = "";
+    public Namespace() {
+        this(null);
     }
 
     /**
      * Constructs a namespace.
      * @param uri URI identifying the namespace
-     * @param prefix prefix used for node names as an abbreviation for the namespace.
      */
-    private Namespace(String uri, String prefix) {
-        assert uri != null;
-        assert !uri.isEmpty();
-
-        if (prefix == null) prefix = "";
-
-        this.uri = uri;
-        this.prefix = prefix;
+    public Namespace(String uri) {
+        if (uri == null || uri.isEmpty()) {
+            this.uri = EMPTY_URI;
+        } else {
+            String cachedURI = cachedURIs.get(uri);
+            if (cachedURI == null) {
+                cachedURIs.put(uri, uri);
+                cachedURI = uri;
+            }
+            this.uri = cachedURI;
+        }
     }
 
 
@@ -64,7 +45,7 @@ public class Namespace {
      * @return <i>true</i> if namespace represents empty namespace, <i>false</i> otherwise
      */
     public boolean isNoNamespace() {
-        return NO_NAMESPACE.equals(this);
+        return this.uri.isEmpty();
     }
 
     /**
@@ -72,17 +53,10 @@ public class Namespace {
      *
      * @return URI of namespace or empty string if namespace represents empty namespace
      */
+    @NotNull
+    @JsonValue
     public String getURI() {
         return this.uri;
-    }
-
-    /**
-     * Return the prefix of the namespace.
-     *
-     * @return prefix of namespace or empty string if namespace represents empty namespace
-     */
-    public String getPrefix() {
-        return this.prefix;
     }
 
     /**
@@ -109,8 +83,13 @@ public class Namespace {
 
     @Override
     public String toString() {
-        if (this == NO_NAMESPACE) return "";
+        if (this.uri.isEmpty()) return this.uri;
 
         return "{" + this.uri + "}";
+    }
+
+    @Override
+    public int compareTo(@NotNull Namespace o) {
+        return this.uri.compareTo(o.uri);
     }
 }

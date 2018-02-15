@@ -1,5 +1,10 @@
 package com.lookility.schemadoc.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Represents a version number.
  *
@@ -13,14 +18,17 @@ public class Version implements Comparable<Version> {
     private final int patch;
     private final String versionString;
 
+    @JsonIgnore
     public Version(int major) {
         this(major, 0, 0);
     }
 
+    @JsonIgnore
     public Version(int major, int minor) {
         this(major, minor, 0);
     }
 
+    @JsonIgnore
     public Version(int major, int minor, int patch) {
         if (major < 0) throw new IllegalArgumentException("major part '" + major + "' must not be negative");
         if (minor < 0) throw new IllegalArgumentException("major part '" + minor + "' must not be negative");
@@ -53,7 +61,8 @@ public class Version implements Comparable<Version> {
      * @throws IllegalArgumentException if version string doesn't match the {@link #PATTERN}
      * @see #PATTERN
      */
-    public static Version valueOf(final String version) {
+    @JsonCreator
+    public static Version valueOf(String version) {
         if (!isValidVersion(version)) throw new IllegalArgumentException("invalid version string '" + version + "'");
 
         int[] parts = splitParts(version);
@@ -97,6 +106,11 @@ public class Version implements Comparable<Version> {
     public int getMajor() { return this.major; }
     public int getMinor() { return this.minor; }
     public int getPatch() { return this.patch; }
+
+    @JsonValue
+    public String getVersionString() {
+        return this.versionString;
+    }
 
     public Version increaseMajor() {
         return new Version(this.major + 1, 0, 0);

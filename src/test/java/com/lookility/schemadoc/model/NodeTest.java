@@ -24,8 +24,8 @@ public class NodeTest {
 
     @Test
     public void nonEqualDueToDifferentNamespace() {
-        Node node1 = createNode(new NName(Namespace.create("ns1", "p1"), "node"));
-        Node node2 = createNode(new NName(Namespace.create("ns2", "p2"), "node"));
+        Node node1 = createNode(new NName(new Namespace("ns1"), "node"));
+        Node node2 = createNode(new NName(new Namespace("ns2"), "node"));
 
         assertNotEquals(node1, node2);
     }

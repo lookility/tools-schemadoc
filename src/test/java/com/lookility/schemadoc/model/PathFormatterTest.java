@@ -31,7 +31,7 @@ public class PathFormatterTest  {
 
     @Test
     public void buildPath() {
-        PathFormatter pf = new PathFormatter(PathFormatter.NamespaceRepresentation.prefixOnly);
+        PathFormatter pf = new PathFormatter(PathFormatter.NamespaceRepresentation.prefixOnly, this.tree);
 
         assertEquals("/ut:root/ut:child", pf.formatPath(this.child));
         assertEquals("/ut:root/@attrib", pf.formatPath(this.attrib));
@@ -39,7 +39,7 @@ public class PathFormatterTest  {
 
     @Test
     public void buildPathWithoutNamespace() {
-        PathFormatter pf = new PathFormatter(PathFormatter.NamespaceRepresentation.none);
+        PathFormatter pf = new PathFormatter(PathFormatter.NamespaceRepresentation.none, this.tree);
 
         assertEquals("/root/child", pf.formatPath(this.child));
         assertEquals("/root/@attrib", pf.formatPath(this.attrib));
@@ -47,7 +47,7 @@ public class PathFormatterTest  {
 
     @Test
     public void buildPathWithFullNamespace() {
-        PathFormatter pf = new PathFormatter(PathFormatter.NamespaceRepresentation.uriAndPrefix);
+        PathFormatter pf = new PathFormatter(PathFormatter.NamespaceRepresentation.uriAndPrefix, this.tree);
 
         assertEquals("/{urn:xsd:unittest}ut:root/{urn:xsd:unittest}ut:child", pf.formatPath(this.child));
         assertEquals("/{urn:xsd:unittest}ut:root/@attrib", pf.formatPath(this.attrib));
@@ -55,7 +55,7 @@ public class PathFormatterTest  {
 
     @Test
     public void buildPathWithNamespaceURI() {
-        PathFormatter pf = new PathFormatter(PathFormatter.NamespaceRepresentation.uriOnly);
+        PathFormatter pf = new PathFormatter(PathFormatter.NamespaceRepresentation.uriOnly, this.tree);
 
         assertEquals("/{urn:xsd:unittest}root/{urn:xsd:unittest}child", pf.formatPath(this.child));
         assertEquals("/{urn:xsd:unittest}root/@attrib", pf.formatPath(this.attrib));

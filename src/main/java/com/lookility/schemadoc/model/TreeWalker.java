@@ -15,7 +15,7 @@ public class TreeWalker {
 
     public void walk(Tree tree) {
         if (tree == null) throw new IllegalArgumentException("tree must not be null");
-        this.handler.onTreeBegin(tree.getName());
+        this.handler.onTreeBegin(tree);
         handleContentNode(tree.getRoot(), true, true);
         this.handler.onTreeEnd();
     }

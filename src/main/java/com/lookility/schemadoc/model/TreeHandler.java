@@ -2,7 +2,7 @@ package com.lookility.schemadoc.model;
 
 public interface TreeHandler {
 
-    void onTreeBegin(String name);
+    void onTreeBegin(Tree tree);
 
     void onNodeBegin(ContentNode node, boolean first, boolean last);
 

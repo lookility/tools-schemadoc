@@ -1,11 +1,17 @@
 package com.lookility.schemadoc.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
 
 /**
  * Node of the hierarchical data model.
  */
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public abstract class Node {
 
     private final NName name;
@@ -26,6 +32,7 @@ public abstract class Node {
         return this.name;
     }
 
+    @JsonProperty("annotation")
     public NodeAnnotation getAnnotation() {
         return this.annotation;
     }
@@ -38,6 +45,7 @@ public abstract class Node {
         }
     }
 
+    @NotNull
     public BaseType getBaseType() {
         return this.baseType;
     }
@@ -66,10 +74,12 @@ public abstract class Node {
         return this.documentation;
     }
 
+    @JsonIgnore
     public Node getParent() {
         return this.parent;
     }
 
+    @JsonIgnore
     protected void setParent(Node parent) {
         this.parent = parent;
     }
@@ -82,10 +92,12 @@ public abstract class Node {
         this.occurrence = occurrence;
     }
 
+    @JsonIgnore
     public boolean isRoot() {
         return this.parent == null;
     }
 
+    @JsonIgnore
     public abstract boolean isLeaf();
 
     @Override

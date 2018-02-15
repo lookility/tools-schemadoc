@@ -1,5 +1,6 @@
 package com.lookility.schemadoc.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -104,4 +105,16 @@ public class VersionTest {
         assertEquals("1.1.2", v.increasePatch().toString());
     }
 
+    @Test
+    public void jsonSerializeAndDeserialize() throws Exception {
+        ObjectMapper om = new ObjectMapper();
+
+        Version v1 = new Version(1,1,2);
+
+        String json = om.writeValueAsString(v1);
+        assertEquals("\"1.1.2\"", json);
+
+        Version v2 = om.readValue(json, Version.class);
+        assertEquals(v1, v2);
+    }
 }

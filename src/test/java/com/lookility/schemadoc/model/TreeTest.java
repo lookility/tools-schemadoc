@@ -1,14 +1,19 @@
 package com.lookility.schemadoc.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 import java.util.Optional;
 
 public class TreeTest {
 
     private Tree buildTree() throws Exception {
-        ContentNode root = new ContentNode(new NName(null, "root"));
+        ContentNode root = new ContentNode(new NName(new Namespace("uri:root"), "root"));
         root.getAnnotation().setVersion(new Version(0,1,0));
 
         ContentNode child1 = new ContentNode(new NName(null, "child1"));
@@ -30,6 +35,12 @@ public class TreeTest {
         child2.add(attrib2);
 
         return tree;
+    }
+
+    @Test
+    public void createTree() {
+        Tree tree = new Tree("test");
+        assertEquals("test", tree.getName());
     }
 
     @Test
@@ -69,5 +80,21 @@ public class TreeTest {
 
         assertEquals(version, child2.getAnnotation().getVersion().get());
         assertEquals(version, attrib2.getAnnotation().getVersion().get());
+    }
+
+    @Test
+    public void jsonSerializeAndDeserialize() throws Exception {
+        Tree tree = buildTree();
+
+        ObjectMapper om = new ObjectMapper();
+        om.registerModule(new Jdk8Module());
+
+        String json = om.writeValueAsString(tree);
+
+        Tree deserializedTree = om.readValue(json, Tree.class);
+
+        assertNotNull(deserializedTree);
+        assertEquals(tree.getName(), deserializedTree.getName());
+        assertEquals(tree.getRoot().getName(), deserializedTree.getRoot().getName());
     }
 }

@@ -14,7 +14,7 @@ public class VersionScanner implements TreeHandler {
     }
 
     @Override
-    public void onTreeBegin(String name) {
+    public void onTreeBegin(Tree tree) {
         this.maxVersion = null;
     }
 

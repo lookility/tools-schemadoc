@@ -19,7 +19,7 @@ public class SchemaDocController {
     private static final String FIXED_COLUMN_PREFIX = "_";
     private static final String HIDABLE_COLUMN_PREFIX = "#";
 
-    private static final PathFormatter PATH_FORMATTER = new PathFormatter(PathFormatter.NamespaceRepresentation.prefixOnly);
+    private static final PathFormatter PATH_FORMATTER = new PathFormatter(PathFormatter.NamespaceRepresentation.prefixOnly, null);
     private static final TreeItemCellFormatter CELL_FORMATTER = new TreeItemCellFormatter(PATH_FORMATTER);
 
     private static final String LANG_PREFIX = "menuLanguage#";

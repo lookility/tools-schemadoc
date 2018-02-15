@@ -1,5 +1,12 @@
 package com.lookility.schemadoc.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonValue;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
+
 /**
  * Qualified node name.
  *
@@ -7,10 +14,38 @@ package com.lookility.schemadoc.model;
  *
  * @see Namespace
  */
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class NName {
 
     private final Namespace namespace;
     private final String name;
+
+    /**
+     * Creates a node name from a string representation (full name).
+     *
+     * @param fullName full name of the node name
+     * @return created node name
+     *
+     * @see #getFullName()
+     */
+    @JsonCreator
+    public static NName valueOf(final String fullName) {
+        if (fullName == null || fullName.isEmpty()) throw new IllegalArgumentException("full name must not be null or empty");
+
+        Namespace namespace = null;
+        String name = null;
+
+        if (fullName.startsWith("{")) {
+            int namespaceEndIndex = fullName.indexOf("}");
+            if (namespaceEndIndex < 0) throw new IllegalArgumentException("missing closing '}' for namespace in full name '" + fullName + "'");
+
+            namespace = new Namespace(fullName.substring(1, namespaceEndIndex));
+            name = fullName.substring(namespaceEndIndex + 1);
+        } else {
+            name = fullName;
+        }
+        return new NName(namespace, name);
+    }
 
     /**
      * Constructs a node name.
@@ -18,26 +53,40 @@ public class NName {
      * @param name name of the node
      */
     public NName(Namespace namespace, String name) {
-        if (name == null || name.isEmpty()) throw new IllegalArgumentException("name must not be null or empty");
-        if (namespace == null) namespace = Namespace.NO_NAMESPACE;
+        if (!isValidName(name)) throw new IllegalArgumentException("invalid node name: '" + name + "'");
 
-        this.namespace = namespace;
+        this.namespace = (namespace == null || namespace.isNoNamespace()) ? null : namespace;
         this.name = name;
     }
 
     /**
-     * Returns the namespace of the node or {@link Namespace#NO_NAMESPACE} if node name has no namespace.
-     * @return namespace or {@link Namespace#NO_NAMESPACE} if node name has no namespace
+     * Returns the namespace of the node.
+     * @return namespace or {@link Optional#empty()} if node name has no namespace
      */
-    public Namespace getNamespace() {
-        return this.namespace;
+    @NotNull
+    public Optional<Namespace> getNamespace() {
+        return Optional.ofNullable(this.namespace);
     }
 
     /**
      * Returns the name of a node.
      * @return node name
      */
+    @NotNull
     public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Return the full name representation of the node name.
+     *
+     * @return full name
+     */
+    @JsonValue
+    public String getFullName() {
+        if (this.namespace != null) {
+            return this.namespace + this.name;
+        }
         return this.name;
     }
 
@@ -47,6 +96,8 @@ public class NName {
      */
     @Override
     public String toString() {
+        if (this.namespace == null)
+            return this.name;
         return this.namespace.toString() + this.name;
     }
 
@@ -57,14 +108,30 @@ public class NName {
 
         NName nName = (NName) o;
 
-        if (!namespace.equals(nName.namespace)) return false;
-        return name.equals(nName.name);
+        if (!this.name.equals(nName.name)) return false;
+        if (this.namespace == null) {
+            if (nName.namespace == null)
+                return true;
+            return false;
+        }
+
+        return this.namespace.equals(nName.namespace);
     }
 
     @Override
     public int hashCode() {
-        int result = namespace.hashCode();
-        result = 31 * result + name.hashCode();
+        int result = name.hashCode();
+        if (this.namespace != null) {
+            result = 31 * result + name.hashCode();
+        }
         return result;
+    }
+
+    public static boolean isValidName(String name) {
+        if (name == null || name.isEmpty()) return false;
+        if (name.contains(":")) return false;
+        if (name.contains("{")) return false;
+        if (name.contains("}")) return false;
+        return true;
     }
 }

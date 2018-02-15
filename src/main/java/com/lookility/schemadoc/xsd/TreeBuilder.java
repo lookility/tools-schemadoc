@@ -288,7 +288,7 @@ class TreeBuilder {
     }
 
     private String buildTypeName(QName type) {
-        String typePrefix = this.tree.registerNamespace(type.getNamespaceURI()).getPrefix();
+        String typePrefix = this.tree.getPrefix(type.getNamespaceURI());
         String typeName = type.getLocalPart();
 
         return (typePrefix.isEmpty()) ? typeName : typePrefix + ":" + typeName;

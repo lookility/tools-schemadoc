@@ -12,7 +12,7 @@ public class VersionSetter implements TreeHandler {
     }
 
     @Override
-    public void onTreeBegin(String name) {
+    public void onTreeBegin(Tree tree) {
 
     }
 

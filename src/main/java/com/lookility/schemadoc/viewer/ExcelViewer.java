@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class ExcelViewer implements TreeHandler {
 
-    private PathFormatter pathFormatter = new PathFormatter(PathFormatter.NamespaceRepresentation.uriOnly);
+    private PathFormatter pathFormatter;
 
     private Workbook wb;
     private Sheet currentSheet;
@@ -55,7 +55,8 @@ public class ExcelViewer implements TreeHandler {
 
 
     @Override
-    public void onTreeBegin(String name) {
+    public void onTreeBegin(Tree tree) {
+        this.pathFormatter  = new PathFormatter(PathFormatter.NamespaceRepresentation.uriOnly, tree);
         Row header = this.currentSheet.createRow(this.rowCount);
         Cell cell;
         Font font = this.wb.createFont();
@@ -106,7 +107,7 @@ public class ExcelViewer implements TreeHandler {
 
     @Override
     public void onTreeEnd() {
-
+        this.pathFormatter = null;
     }
 
     private void addRow(Node node) {

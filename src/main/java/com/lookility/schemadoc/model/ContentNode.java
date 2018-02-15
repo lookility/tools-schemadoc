@@ -1,5 +1,8 @@
 package com.lookility.schemadoc.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,6 +22,11 @@ public class ContentNode extends Node {
 
     private Optional<List<ContentNode>> children = Optional.empty();
     private Optional<List<AttributeNode>> attributes = Optional.empty();
+
+    @JsonCreator
+    protected ContentNode(@JsonProperty("name") String fullName) {
+        this(NName.valueOf(fullName));
+    }
 
     public ContentNode(NName name) {
         super(name);
@@ -49,6 +57,7 @@ public class ContentNode extends Node {
         return getChild(name).isPresent();
     }
 
+    @JsonIgnore
     public Optional<ContentNode> getChild(final NName name) {
         if (name == null) return NO_CHILD;
         if (!this.children.isPresent()) return NO_CHILD;
