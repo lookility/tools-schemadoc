@@ -84,17 +84,19 @@ public class TreeTest {
 
     @Test
     public void jsonSerializeAndDeserialize() throws Exception {
-        Tree tree = buildTree();
+        Tree t1 = buildTree();
+        t1.registerNamespace("urn:test", "t");
 
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
 
-        String json = om.writeValueAsString(tree);
+        String json = om.writeValueAsString(t1);
 
-        Tree deserializedTree = om.readValue(json, Tree.class);
+        Tree t2 = om.readValue(json, Tree.class);
 
-        assertNotNull(deserializedTree);
-        assertEquals(tree.getName(), deserializedTree.getName());
-        assertEquals(tree.getRoot().getName(), deserializedTree.getRoot().getName());
+        assertNotNull(t2);
+        assertEquals(t1.getName(), t2.getName());
+        assertEquals(t1.getRoot().getName(), t2.getRoot().getName());
+        assertEquals("t", t2.getPrefix("urn:test"));
     }
 }

@@ -21,7 +21,7 @@ public class PathFormatterTest  {
         ContentNode root = new ContentNode(new NName(ns, "root"));
         tree.setRoot(root);
 
-        attrib = new AttributeNode(new NName(tree.registerNamespace(null), "attrib"));
+        attrib = new AttributeNode(new NName(null, "attrib"));
         root.add(attrib);
 
         child = new ContentNode(new NName(ns, "child"));
