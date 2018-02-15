@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -50,17 +51,16 @@ public abstract class Node {
         return this.baseType;
     }
 
-    public void setBaseType(BaseType baseType) {
-        this.baseType = baseType;
+    public void setBaseType(@NotNull BaseType baseType) {
+        this.baseType = Objects.requireNonNull(baseType);
     }
 
     public Optional<String> getType() {
         return this.type;
     }
 
-    public void setType(String type) {
-        if (type == null || type.isEmpty()) this.type = Optional.empty();
-        this.type = Optional.of(type);
+    public void setType(@Nullable String type) {
+        this.type = Optional.ofNullable(type);
     }
 
     /**

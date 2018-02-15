@@ -3,6 +3,7 @@ package com.lookility.schemadoc.xsd;
 import com.lookility.schemadoc.model.*;
 import org.apache.ws.commons.schema.*;
 import org.apache.ws.commons.schema.utils.XmlSchemaObjectBase;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.NodeList;
 
 import javax.xml.XMLConstants;
@@ -106,8 +107,18 @@ class TreeBuilder {
      * @param simpleElementType simple type definition of the element
      */
     private void enhanceNode(ContentNode node, XmlSchemaSimpleType simpleElementType) {
-        node.setType(buildTypeName(simpleElementType.getQName()));
-        node.setBaseType(determineSimpleBaseType(simpleElementType.getQName()));
+        if (simpleElementType.getQName() != null) {
+            node.setType(buildTypeName(simpleElementType.getQName()));
+            node.setBaseType(determineSimpleBaseType(simpleElementType.getQName()));
+        } else {
+            XmlSchemaSimpleTypeContent content = simpleElementType.getContent();
+
+            if (content instanceof XmlSchemaSimpleTypeRestriction) {
+                node.setBaseType(determineSimpleBaseType(((XmlSchemaSimpleTypeRestriction)content).getBaseTypeName()));
+            } else {
+                handleUnsupportedFeature("simple type content", content);
+            }
+        }
     }
 
     /**
@@ -287,7 +298,10 @@ class TreeBuilder {
         }
     }
 
-    private String buildTypeName(QName type) {
+    @Nullable
+    private String buildTypeName(@Nullable QName type) {
+        if (type == null) return null;
+
         String typePrefix = this.tree.getPrefix(type.getNamespaceURI());
         String typeName = type.getLocalPart();
 
