@@ -263,9 +263,10 @@ public class SchemaDocController {
         if (e.getMessage() != null) {
             alert.setContentText(e.getMessage());
         } else {
-            PrintWriter w = new PrintWriter(new StringWriter());
+            StringWriter s = new StringWriter();
+            PrintWriter w = new PrintWriter(s);
             e.printStackTrace(w);
-            alert.setContentText(w.toString());
+            alert.setContentText(s.toString());
         }
         alert.showAndWait();
     }
