@@ -67,7 +67,7 @@ public class SchemaTreeTableView extends TreeTableView<Node> implements ChangeLi
         colOccurrence.setStyle("-fx-alignment: center");
         colOccurrence.setId(FIXED_COLUMN_PREFIX + "_occur");
 
-        TreeTableColumn<Node, String> colBaseType = new TreeTableColumn("Base Type");
+        TreeTableColumn<Node, String> colBaseType = new TreeTableColumn("Base\nType");
         colBaseType.setCellValueFactory((TreeTableColumn.CellDataFeatures<Node, String> param) -> cellFormatter.formatBaseType(param.getValue().getValue()));
         colBaseType.setSortable(false);
         colBaseType.setId(FIXED_COLUMN_PREFIX + "_baseType");
